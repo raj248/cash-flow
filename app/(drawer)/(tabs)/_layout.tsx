@@ -1,13 +1,20 @@
 import { Tabs } from 'expo-router';
+import { TouchableOpacity } from 'react-native';
 
 import { TabBarIcon } from '~/components/TabBarIcon';
 
+const NoRippleButton = ({ children, onPress, style }: any) => (
+  <TouchableOpacity activeOpacity={0.7} onPress={onPress} style={style}>
+    {children}
+  </TouchableOpacity>
+);
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: 'black',
+        // tabBarButton: (props) => <NoRippleButton {...props} />,
       }}>
       <Tabs.Screen
         name="index"
