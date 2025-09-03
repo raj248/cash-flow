@@ -1,3 +1,5 @@
+// build icons from expo-icon-builder.com
+
 export default {
   expo: {
     name: 'Cash Flow - Daily Khata',
@@ -29,7 +31,7 @@ export default {
     splash: {
       image: './assets/splash.png',
       resizeMode: 'contain',
-      backgroundColor: '#6df139ff',
+      backgroundColor: '#1B9F67',
     },
     assetBundlePatterns: ['**/*'],
     ios: {
@@ -38,8 +40,8 @@ export default {
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: './assets/adaptive-icon.png',
-        backgroundColor: '#3ee428ff',
+        foregroundImage: './assets/adaptive-icon/foreground.png',
+        backgroundImage: './assets/adaptive-icon/background.png',
       },
       package: 'com.lexius.flow.cash',
     },
