@@ -29,7 +29,7 @@ export default {
     splash: {
       image: './assets/splash.png',
       resizeMode: 'contain',
-      backgroundColor: '#ffffff',
+      backgroundColor: '#6df139ff',
     },
     assetBundlePatterns: ['**/*'],
     ios: {
@@ -39,7 +39,7 @@ export default {
     android: {
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
-        backgroundColor: '#ffffff',
+        backgroundColor: '#3ee428ff',
       },
       package: 'com.lexius.flow.cash',
     },
