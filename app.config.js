@@ -19,6 +19,13 @@ export default {
           launchMode: 'most-recent',
         },
       ],
+      [
+        'expo-image-picker',
+        {
+          photosPermission:
+            'The app accesses your photos to let you add custom images in categories.',
+        },
+      ],
       'expo-web-browser',
     ],
     experiments: {
