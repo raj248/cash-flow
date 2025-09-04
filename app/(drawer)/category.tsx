@@ -4,9 +4,10 @@ import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import Feather from '@expo/vector-icons/Feather';
 import { useCategoryStore } from '~/store/categoryStore';
+import { IconPicker } from '~/components/IconPicker';
 
 export default function AddCategoryPage() {
-  const addCategory = useCategoryStore((s) => s.addCategory);
+  const { addCategory, removeCategory, categories } = useCategoryStore();
 
   const [name, setName] = useState('');
   const [income, setIncome] = useState(true);
@@ -14,10 +15,10 @@ export default function AddCategoryPage() {
   const [iconImage, setIconImage] = useState<string | undefined>();
 
   const pickImage = async () => {
-    await ImagePicker.requestMediaLibraryPermissionsAsync();
+    await ImagePicker.requestMediaLibraryPermissionsAsync(true);
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'], // ✅ new way
+      mediaTypes: [], // ✅ new way
       quality: 0.7,
     });
 
@@ -85,6 +86,14 @@ export default function AddCategoryPage() {
         </TouchableOpacity>
       </View>
 
+      <IconPicker
+        selectedIcon={icon}
+        onSelect={(iconName) => {
+          setIcon(iconName);
+          setIconImage(undefined); // clear custom image
+        }}
+      />
+
       {/* Icon Picker (Feather) */}
       <View className="mb-4 flex-row flex-wrap">
         {['home', 'briefcase', 'shopping-cart', 'dollar-sign'].map((i) => (
@@ -112,6 +121,38 @@ export default function AddCategoryPage() {
       <TouchableOpacity onPress={handleSave} className="rounded-xl bg-blue-500 p-4">
         <Text className="text-center font-bold text-white">Save Category</Text>
       </TouchableOpacity>
+
+      {/* Current Categories List */}
+      <Text className="mb-2 text-xl font-semibold">Your Categories</Text>
+      {categories.length === 0 && <Text className="text-gray-500">No categories added yet.</Text>}
+      {categories.map((c, idx) => (
+        <View key={idx} className="mb-3 flex-row items-center rounded-xl bg-white p-3 shadow">
+          {/* Show icon */}
+          {c.iconImage ? (
+            <Image source={{ uri: c.iconImage }} className="mr-3 h-10 w-10 rounded-full" />
+          ) : c.icon ? (
+            <Feather
+              name={c.icon as any}
+              size={24}
+              color={c.income ? 'green' : 'red'}
+              style={{ marginRight: 12 }}
+            />
+          ) : null}
+
+          {/* Name + Type */}
+          <View className="flex-1">
+            <Text className="font-bold">{c.name}</Text>
+            <Text className="text-xs text-gray-500">{c.income ? 'Income' : 'Expense'}</Text>
+          </View>
+
+          {/* Delete Button */}
+          <TouchableOpacity
+            onPress={() => removeCategory(c.name)}
+            className="rounded-lg bg-red-100 px-3 py-1">
+            <Text className="text-red-600">Delete</Text>
+          </TouchableOpacity>
+        </View>
+      ))}
     </View>
   );
 }
