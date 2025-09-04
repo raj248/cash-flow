@@ -95,8 +95,19 @@ export default function AddCategoryPage() {
       />
 
       {/* Icon Picker (Feather) */}
-      <View className="mb-4 flex-row flex-wrap">
-        {['home', 'briefcase', 'shopping-cart', 'dollar-sign'].map((i) => (
+      <View className="mb-4 flex-row flex-wrap items-center justify-center">
+        {[
+          'home',
+          'briefcase',
+          'shopping-cart',
+          'shopping-bag',
+          'credit-card',
+          'book',
+          'tv',
+          'map-pin',
+          'coffee',
+          'wifi',
+        ].map((i) => (
           <TouchableOpacity
             key={i}
             onPress={() => {
