@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
+import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import Feather from '@expo/vector-icons/Feather';
 import { useCategoryStore } from '~/store/categoryStore';
@@ -13,16 +14,36 @@ export default function AddCategoryPage() {
   const [iconImage, setIconImage] = useState<string | undefined>();
 
   const pickImage = async () => {
+    await ImagePicker.requestMediaLibraryPermissionsAsync();
+
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'], // ✅ new way
       quality: 0.7,
     });
 
     if (!result.canceled) {
-      setIconImage(result.assets[0].uri);
+      const uri = result.assets[0].uri;
+      if (!uri) return;
+      if (!FileSystem.documentDirectory) return;
+
+      // Generate unique filename
+      const fileName = uri.split('/').pop();
+      const newPath = FileSystem.documentDirectory + fileName;
+
+      try {
+        // Move file from cache → app data
+        await FileSystem.moveAsync({
+          from: uri,
+          to: newPath,
+        });
+
+        console.log('Saved to app storage:', newPath);
+        setIconImage(newPath); // update state with permanent path
+      } catch (err) {
+        console.error('Error saving file:', err);
+      }
     }
   };
-
   const handleSave = () => {
     if (!name.trim()) return;
 

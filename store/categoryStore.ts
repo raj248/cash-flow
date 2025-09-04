@@ -1,6 +1,7 @@
 // store/categoryStore.ts
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 export type Category = {
   income: boolean; // true = income, false = expenditure
@@ -30,6 +31,7 @@ export const useCategoryStore = create<CategoryState>()(
     }),
     {
       name: 'category-storage', // storage key
+      storage: createJSONStorage(() => AsyncStorage), // (optional) by default, 'localStorage' is used
     }
   )
 );
