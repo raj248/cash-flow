@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import Feather from '@expo/vector-icons/Feather';
@@ -50,7 +50,7 @@ export default function AddCategoryPage() {
 
     addCategory({
       name,
-      income,
+      type: income ? 'income' : 'expense',
       icon,
       iconImage,
     });
@@ -61,7 +61,7 @@ export default function AddCategoryPage() {
   };
 
   return (
-    <View className="flex-1 bg-gray-100 p-4">
+    <ScrollView className="flex-1 bg-gray-100 p-4">
       <Text className="mb-4 text-2xl font-bold">Add Category</Text>
 
       {/* Name Input */}
@@ -86,13 +86,13 @@ export default function AddCategoryPage() {
         </TouchableOpacity>
       </View>
 
-      <IconPicker
+      {/* <IconPicker
         selectedIcon={icon}
         onSelect={(iconName) => {
           setIcon(iconName);
           setIconImage(undefined); // clear custom image
         }}
-      />
+      /> */}
 
       {/* Icon Picker (Feather) */}
       <View className="mb-4 flex-row flex-wrap items-center justify-center">
@@ -145,7 +145,7 @@ export default function AddCategoryPage() {
             <Feather
               name={c.icon as any}
               size={24}
-              color={c.income ? 'green' : 'red'}
+              color={c.type === 'income' ? 'green' : 'red'}
               style={{ marginRight: 12 }}
             />
           ) : null}
@@ -153,7 +153,9 @@ export default function AddCategoryPage() {
           {/* Name + Type */}
           <View className="flex-1">
             <Text className="font-bold">{c.name}</Text>
-            <Text className="text-xs text-gray-500">{c.income ? 'Income' : 'Expense'}</Text>
+            <Text className="text-xs text-gray-500">
+              {c.type === 'income' ? 'Income' : 'Expense'}
+            </Text>
           </View>
 
           {/* Delete Button */}
@@ -164,6 +166,6 @@ export default function AddCategoryPage() {
           </TouchableOpacity>
         </View>
       ))}
-    </View>
+    </ScrollView>
   );
 }
