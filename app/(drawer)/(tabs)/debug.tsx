@@ -6,7 +6,7 @@ import { ScreenContent } from '~/components/ScreenContent';
 import { useCategoryStore } from '~/store/categoryStore';
 import { useEntryStore } from '~/store/entryStore';
 
-export default function Home() {
+export default function Debug() {
   const categories = useCategoryStore((s) => s.categories);
   const populate = async () => {
     // populate test data

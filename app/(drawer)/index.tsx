@@ -1,9 +1,58 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
-import { FAB, Portal } from 'react-native-paper';
+import { Portal } from 'react-native-paper';
 import FloatingButton from '~/components/FloatingButton';
-
+import { useEntryStore } from '~/store/entryStore';
+import { useCategoryStore } from '~/store/categoryStore';
+import { Feather } from '@expo/vector-icons';
 export default function Home() {
+  const { entries } = useEntryStore();
+  const { categories } = useCategoryStore();
+
+  // Calculate totals
+  const incomeTotal = entries
+    .filter((e) => {
+      const cat = categories.find((c) => c.id === e.categoryId);
+      return cat?.type === 'income';
+    })
+    .reduce((sum, e) => sum + e.amount, 0);
+
+  const expenseTotal = entries
+    .filter((e) => {
+      const cat = categories.find((c) => c.id === e.categoryId);
+      return cat?.type === 'expense';
+    })
+    .reduce((sum, e) => sum + e.amount, 0);
+
+  const netBalance = incomeTotal - expenseTotal;
+
+  // Group entries by category
+  const groupedByCategory = categories.map((cat) => {
+    const catEntries = entries.filter((e) => e.categoryId === cat.id);
+    const total = catEntries.reduce((sum, e) => sum + e.amount, 0);
+    return { ...cat, total };
+  });
+
+  const incomeCategories = groupedByCategory.filter((c) => c.type === 'income');
+  const expenseCategories = groupedByCategory.filter((c) => c.type === 'expense');
+
+  const renderCategoryIcon = (cat: (typeof groupedByCategory)[number]) => {
+    if (cat.iconImage) {
+      return (
+        <Image
+          source={{ uri: cat.iconImage }}
+          className="mr-2 h-12 w-12 rounded"
+          resizeMode="contain"
+        />
+      );
+    } else if (cat.icon) {
+      return (
+        <Feather name={cat.icon as any} size={20} color="#374151" style={{ marginRight: 15 }} />
+      );
+    }
+    return null;
+  };
+
   return (
     <>
       <ScrollView className="flex-1 bg-gray-100 p-4">
@@ -13,10 +62,15 @@ export default function Home() {
         {/* Net Balance Card */}
         <View className="mb-4 rounded-2xl bg-white p-4 shadow">
           <Text className="text-lg font-semibold text-gray-600">Net Balance</Text>
-          <Text className="mt-2 text-3xl font-bold text-green-600">$600</Text>
+          <Text
+            className={`mt-2 text-3xl font-bold ${
+              netBalance >= 0 ? 'text-green-600' : 'text-red-600'
+            }`}>
+            ₹{netBalance}
+          </Text>
           <View className="mt-2 flex-row justify-between">
-            <Text className="text-gray-500">Income: $1250</Text>
-            <Text className="text-gray-500">Expense: $650</Text>
+            <Text className="text-gray-500">Income: ₹{incomeTotal}</Text>
+            <Text className="text-gray-500">Expense: ₹{expenseTotal}</Text>
           </View>
         </View>
 
@@ -24,10 +78,15 @@ export default function Home() {
         <View className="mb-4">
           <Text className="mb-2 text-lg font-bold">Income Sources</Text>
           <View className="flex-row flex-wrap justify-between">
-            {['Salary', 'Tips', 'Rent', 'Other'].map((item, i) => (
-              <View key={i} className="mb-3 w-[48%] rounded-xl bg-green-100 p-4 shadow">
-                <Text className="font-semibold text-green-700">{item}</Text>
-                <Text className="mt-1 text-lg font-bold text-green-800">$0</Text>
+            {incomeCategories.map((cat) => (
+              <View
+                key={cat.id}
+                className="mb-3 w-[48%] flex-row items-center rounded-xl bg-green-100 p-4 shadow">
+                {renderCategoryIcon(cat)}
+                <View>
+                  <Text className="font-semibold text-green-700">{cat.name}</Text>
+                  <Text className="mt-1 text-lg font-bold text-green-800">₹{cat.total}</Text>
+                </View>
               </View>
             ))}
           </View>
@@ -37,12 +96,18 @@ export default function Home() {
         <View className="mb-4">
           <Text className="mb-2 text-lg font-bold">Expenditures</Text>
           <View className="flex-row flex-wrap justify-between">
-            {['Fuel', 'Food'].map((item, i) => (
-              <View key={i} className="mb-3 w-[48%] rounded-xl bg-red-100 p-4 shadow">
-                <Text className="font-semibold text-red-700">{item}</Text>
-                <Text className="mt-1 text-lg font-bold text-red-800">$0</Text>
+            {expenseCategories.map((cat) => (
+              <View
+                key={cat.id}
+                className="mb-3 w-[48%] flex-row items-center rounded-xl bg-red-100 p-4 shadow">
+                {renderCategoryIcon(cat)}
+                <View>
+                  <Text className="font-semibold text-red-700">{cat.name}</Text>
+                  <Text className="mt-1 text-lg font-bold text-red-800">₹{cat.total}</Text>
+                </View>
               </View>
             ))}
+
             {/* Misc Card */}
             <TouchableOpacity className="w-full rounded-xl bg-blue-100 p-4 shadow">
               <Text className="font-semibold text-blue-700">+ Add Misc</Text>
@@ -50,6 +115,7 @@ export default function Home() {
           </View>
         </View>
       </ScrollView>
+
       <Portal>
         <FloatingButton />
       </Portal>
