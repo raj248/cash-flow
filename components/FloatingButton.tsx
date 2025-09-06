@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { FAB } from 'react-native-paper';
 
@@ -29,6 +30,11 @@ export default function FloatingButton() {
           icon: 'bell',
           label: 'Remind',
           onPress: () => console.log('Pressed notifications'),
+        },
+        {
+          icon: 'plus-circle',
+          label: 'New Entry',
+          onPress: () => router.push('/add-entry'),
         },
       ]}
       onStateChange={onStateChange}
