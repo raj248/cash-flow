@@ -23,6 +23,7 @@ type CategoryState = {
   categories: Category[];
   addCategory: (category: Omit<Category, 'id' | 'createdAt' | 'updatedAt'>) => void;
   removeCategory: (id: string) => void;
+  populateDummyData: () => void;
 };
 
 export const useCategoryStore = create<CategoryState>()(
@@ -53,6 +54,49 @@ export const useCategoryStore = create<CategoryState>()(
         set((state) => ({
           categories: state.categories.filter((c) => c.id !== id),
         }));
+      },
+
+      populateDummyData: () => {
+        const now = new Date().toISOString();
+        const dummyCategories: Category[] = [
+          {
+            id: nanoid(),
+            name: 'Food',
+            type: 'expense',
+            color: '#FF6B6B',
+            icon: 'shopping-bag',
+            createdAt: now,
+            updatedAt: now,
+          },
+          {
+            id: nanoid(),
+            name: 'Transport',
+            type: 'expense',
+            color: '#4ECDC4',
+            icon: 'truck',
+            createdAt: now,
+            updatedAt: now,
+          },
+          {
+            id: nanoid(),
+            name: 'Salary',
+            type: 'income',
+            color: '#1DD1A1',
+            icon: 'dollar-sign',
+            createdAt: now,
+            updatedAt: now,
+          },
+          {
+            id: nanoid(),
+            name: 'Freelance',
+            type: 'income',
+            color: '#54A0FF',
+            icon: 'briefcase',
+            createdAt: now,
+            updatedAt: now,
+          },
+        ];
+        set({ categories: dummyCategories });
       },
     }),
     {
