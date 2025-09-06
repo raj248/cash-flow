@@ -5,7 +5,7 @@ import FloatingButton from '~/components/FloatingButton';
 
 export default function Home() {
   return (
-    <Portal>
+    <>
       <ScrollView className="flex-1 bg-gray-100 p-4">
         {/* Header */}
         <Text className="mb-4 text-center text-2xl font-bold">Cash Flow - Daily Khata</Text>
@@ -50,7 +50,9 @@ export default function Home() {
           </View>
         </View>
       </ScrollView>
-      <FloatingButton />
-    </Portal>
+      <Portal>
+        <FloatingButton />
+      </Portal>
+    </>
   );
 }
