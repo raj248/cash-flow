@@ -53,7 +53,7 @@ export default function AddEntryPage() {
 
       {/* Amount */}
       <TextInput
-        // label="Amount"
+        label="Amount"
         placeholder="Amount"
         value={amount}
         onChangeText={setAmount}
@@ -64,7 +64,7 @@ export default function AddEntryPage() {
 
       {/* Category */}
       <Dropdown
-        // label="Category"
+        label="Category"
         placeholder="Select Category"
         mode="outlined"
         menuDownIcon={() => <Feather name="chevron-down" size={20} />}
@@ -103,7 +103,7 @@ export default function AddEntryPage() {
 
       {/* Note */}
       <TextInput
-        // label="Note"
+        label="Note"
         placeholder="Note (optional)"
         value={note}
         onChangeText={setNote}

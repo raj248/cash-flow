@@ -47,7 +47,12 @@ export default function Home() {
       );
     } else if (cat.icon) {
       return (
-        <Feather name={cat.icon as any} size={20} color="#374151" style={{ marginRight: 15 }} />
+        <Feather
+          name={cat.icon as any}
+          size={20}
+          color={cat.color ?? 'black'}
+          style={{ marginRight: 15 }}
+        />
       );
     }
     return null;

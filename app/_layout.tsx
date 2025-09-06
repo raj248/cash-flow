@@ -17,6 +17,14 @@ import { NAV_THEME } from '~/theme';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons';
 
+import { Roboto_400Regular, Roboto_500Medium, Roboto_700Bold } from '@expo-google-fonts/roboto';
+import { useFonts } from 'expo-font';
+
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+
+SplashScreen.preventAutoHideAsync();
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -25,6 +33,18 @@ export {
 export default function RootLayout() {
   useInitialAndroidBarSync();
   const { colorScheme, isDarkColorScheme } = useColorScheme();
+
+  const [fontsLoaded] = useFonts({
+    Roboto_400Regular,
+    Roboto_500Medium,
+    Roboto_700Bold,
+  });
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
 
   return (
     <>
@@ -45,7 +65,10 @@ export default function RootLayout() {
                 <Stack screenOptions={SCREEN_OPTIONS}>
                   <Stack.Screen name="(drawer)" options={DRAWER_OPTIONS} />
                   <Stack.Screen name="modal" options={MODAL_OPTIONS} />
-                  <Stack.Screen name="add-entry" options={MODAL_OPTIONS} />
+                  <Stack.Screen
+                    name="add-entry"
+                    options={{ title: 'Add Entry', headerSearchBarOptions: {} }}
+                  />
                 </Stack>
               </NavThemeProvider>
             </ActionSheetProvider>
