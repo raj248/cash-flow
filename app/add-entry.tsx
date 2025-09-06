@@ -53,7 +53,8 @@ export default function AddEntryPage() {
 
       {/* Amount */}
       <TextInput
-        label="Amount"
+        // label="Amount"
+        placeholder="Amount"
         value={amount}
         onChangeText={setAmount}
         keyboardType="numeric"
@@ -63,7 +64,8 @@ export default function AddEntryPage() {
 
       {/* Category */}
       <Dropdown
-        label="Category"
+        // label="Category"
+        placeholder="Select Category"
         mode="outlined"
         menuDownIcon={() => <Feather name="chevron-down" size={20} />}
         menuUpIcon={() => <Feather name="chevron-up" size={20} />}
@@ -91,6 +93,7 @@ export default function AddEntryPage() {
           value={date}
           mode="date"
           display="default"
+          placeholderText="Select Date"
           onChange={(event, selectedDate) => {
             setShowDatePicker(false);
             if (selectedDate) setDate(selectedDate);
@@ -100,7 +103,8 @@ export default function AddEntryPage() {
 
       {/* Note */}
       <TextInput
-        label="Note (optional)"
+        // label="Note"
+        placeholder="Note (optional)"
         value={note}
         onChangeText={setNote}
         mode="outlined"

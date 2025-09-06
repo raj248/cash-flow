@@ -45,6 +45,7 @@ export default function RootLayout() {
                 <Stack screenOptions={SCREEN_OPTIONS}>
                   <Stack.Screen name="(drawer)" options={DRAWER_OPTIONS} />
                   <Stack.Screen name="modal" options={MODAL_OPTIONS} />
+                  <Stack.Screen name="add-entry" options={MODAL_OPTIONS} />
                 </Stack>
               </NavThemeProvider>
             </ActionSheetProvider>
