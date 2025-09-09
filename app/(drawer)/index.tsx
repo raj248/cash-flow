@@ -5,6 +5,7 @@ import FloatingButton from '~/components/FloatingButton';
 import { useEntryStore } from '~/store/entryStore';
 import { useCategoryStore } from '~/store/categoryStore';
 import { Feather } from '@expo/vector-icons';
+import { CategoryIcon } from '~/components/CategoryIcon';
 export default function Home() {
   const { entries } = useEntryStore();
   const { categories } = useCategoryStore();
@@ -119,6 +120,40 @@ export default function Home() {
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* List of all entries in a flatlist */}
+        <Text className="mb-2 text-lg font-bold">All Entries</Text>
+        {entries.length === 0 && <Text className="text-gray-500">No entries added yet.</Text>}
+        {entries
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+          .map((entry, index) => {
+            const category = categories.find((cat) => cat.id === entry.categoryId);
+            const isIncome = category?.type === 'income';
+            return (
+              <View
+                key={entry.id || index}
+                className="mb-2 flex-row items-center gap-3 rounded-xl bg-white p-3 shadow">
+                {category?.id && (
+                  <CategoryIcon
+                    categoryId={category.id}
+                    size={30}
+                    color={category?.color || 'black'}
+                  />
+                )}
+                <View className="flex-1">
+                  <Text className="font-semibold">{category?.name || 'N/A'}</Text>
+                  <Text className="text-sm text-gray-500">{entry.note}</Text>
+                  <Text className="text-xs text-gray-400">
+                    {new Date(entry.date).toLocaleDateString()}
+                  </Text>
+                </View>
+                <Text
+                  className={`text-lg font-bold ${isIncome ? 'text-green-600' : 'text-red-600'}`}>
+                  {isIncome ? '+' : '-'}₹{entry.amount}
+                </Text>
+              </View>
+            );
+          })}
       </ScrollView>
 
       <Portal>

@@ -24,6 +24,7 @@ type CategoryState = {
   addCategory: (category: Omit<Category, 'id' | 'createdAt' | 'updatedAt'>) => void;
   removeCategory: (id: string) => void;
   populateDummyData: () => void;
+  getCategoryIcon: (id: string) => { icon?: string; iconImage?: string; color?: string } | null;
 };
 
 export const useCategoryStore = create<CategoryState>()(
@@ -54,6 +55,17 @@ export const useCategoryStore = create<CategoryState>()(
         set((state) => ({
           categories: state.categories.filter((c) => c.id !== id),
         }));
+      },
+
+      getCategoryIcon: (id) => {
+        const category = get().categories.find((c) => c.id === id);
+        if (!category) return null;
+
+        return {
+          icon: category.icon,
+          iconImage: category.iconImage,
+          color: category.color,
+        };
       },
 
       populateDummyData: () => {
