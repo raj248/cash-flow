@@ -160,7 +160,7 @@ export default function AddCategoryPage() {
 
           {/* Delete Button */}
           <TouchableOpacity
-            onPress={() => removeCategory(c.name)}
+            onPress={() => removeCategory(c.id)}
             className="rounded-lg bg-red-100 px-3 py-1">
             <Text className="text-red-600">Delete</Text>
           </TouchableOpacity>
