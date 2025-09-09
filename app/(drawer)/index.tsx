@@ -1,14 +1,34 @@
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
-import React from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+} from 'react-native';
+import React, { useState } from 'react';
 import { Portal } from 'react-native-paper';
 import FloatingButton from '~/components/FloatingButton';
 import { useEntryStore } from '~/store/entryStore';
 import { useCategoryStore } from '~/store/categoryStore';
 import { Feather } from '@expo/vector-icons';
 import { CategoryIcon } from '~/components/CategoryIcon';
+import { SafeAreaView } from 'react-native-safe-area-context';
 export default function Home() {
   const { entries } = useEntryStore();
   const { categories } = useCategoryStore();
+  const [atEnd, setAtEnd] = useState(false);
+
+  // Detect end of scroll
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const paddingToBottom = 20; // threshold before considering "end"
+    const isEnd =
+      layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+    console.log('isEnd: ', isEnd);
+    setAtEnd(isEnd);
+  };
 
   // Calculate totals
   const incomeTotal = entries
@@ -60,8 +80,11 @@ export default function Home() {
   };
 
   return (
-    <>
-      <ScrollView className="flex-1 bg-gray-100 p-4">
+    <SafeAreaView className="flex-1" edges={['bottom', 'left', 'right']}>
+      <ScrollView
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        className="flex-1 bg-gray-100 p-4">
         {/* Header */}
         <Text className="mb-4 text-center text-2xl font-bold">Cash Flow - Daily Khata</Text>
 
@@ -157,8 +180,8 @@ export default function Home() {
       </ScrollView>
 
       <Portal>
-        <FloatingButton />
+        <FloatingButton atEnd={atEnd} />
       </Portal>
-    </>
+    </SafeAreaView>
   );
 }
