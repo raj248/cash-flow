@@ -26,7 +26,6 @@ export default function Home() {
     const paddingToBottom = 20; // threshold before considering "end"
     const isEnd =
       layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
-    console.log('isEnd: ', isEnd);
     setAtEnd(isEnd);
   };
 
@@ -180,7 +179,7 @@ export default function Home() {
       </ScrollView>
 
       <Portal>
-        <FloatingButton atEnd={atEnd} />
+        <FloatingButton visible={!atEnd} />
       </Portal>
     </SafeAreaView>
   );

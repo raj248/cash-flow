@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { FAB } from 'react-native-paper';
 
-export default function FloatingButton({ atEnd }: { atEnd: boolean }) {
+export default function FloatingButton({ visible }: { visible: boolean }) {
   const [state, setState] = useState({ open: false });
 
   const onStateChange = ({ open }: { open: boolean }) => setState({ open });
@@ -13,12 +13,8 @@ export default function FloatingButton({ atEnd }: { atEnd: boolean }) {
   return (
     <FAB.Group
       open={open}
-      visible
+      visible={visible}
       icon={open ? 'calendar' : 'plus'}
-      fabStyle={{
-        opacity: atEnd ? 0.5 : 1,
-        // transform: [{ translateX: -100 }, { translateY: -100 }],
-      }}
       actions={[
         { icon: 'plus', onPress: () => console.log('Pressed add') },
         {
