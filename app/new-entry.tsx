@@ -11,6 +11,7 @@ import { Feather } from '@expo/vector-icons';
 import { Picker, PickerItem } from '~/components/nativewindui/Picker';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { router } from 'expo-router';
+import CategoryDropdown from '~/components/CategoryDropdown';
 
 export default function NewEntryPage() {
   const { colors } = useColorScheme();
@@ -18,14 +19,12 @@ export default function NewEntryPage() {
   const categories = useCategoryStore((s) => s.categories);
 
   const [amount, setAmount] = useState('');
-  const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [categoryId, setCategoryId] = useState<string | undefined>(undefined);
   const [note, setNote] = useState('');
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const [showDropDown, setShowDropDown] = useState(false);
-
-  const [picker, setPicker] = React.useState('blue');
 
   const categoryOptions = categories.map((c) => ({
     label: c.name,
@@ -47,7 +46,7 @@ export default function NewEntryPage() {
 
     setAmount('');
     setNote('');
-    setCategoryId(null);
+    setCategoryId(undefined);
     setDate(new Date());
     // alert('Entry added!');
     router.back();
@@ -70,7 +69,7 @@ export default function NewEntryPage() {
         style={{ marginBottom: 10 }}
       />
 
-      {/* Category */}
+      {/* Category
       <Dropdown
         placeholder="Select Category"
         mode="outlined"
@@ -88,7 +87,14 @@ export default function NewEntryPage() {
           if (s) setCategoryId(s);
           setShowDropDown(false);
         }}
+        // CustomDropdownItem={({ item })}
         options={categoryOptions}
+      /> */}
+
+      <CategoryDropdown
+        categoryId={categoryId}
+        setCategoryId={setCategoryId}
+        setShowDropDown={setShowDropDown}
       />
 
       {/* Date */}
