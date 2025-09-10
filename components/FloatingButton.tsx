@@ -30,12 +30,12 @@ export default function FloatingButton({ visible }: { visible: boolean }) {
         {
           icon: 'bell',
           label: 'Remind',
-          onPress: () => console.log('Pressed notifications'),
+          onPress: () => router.push('/new-entry'),
         },
         {
           icon: 'plus-circle',
           label: 'New Entry',
-          onPress: () => router.push('/add-entry'),
+          onPress: () => router.push('/new-entry'),
         },
       ]}
       onStateChange={onStateChange}

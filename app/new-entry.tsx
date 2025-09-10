@@ -1,6 +1,6 @@
 // app/add-entry.tsx
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { Button, TextInput, Text } from 'react-native-paper';
 import { Dropdown } from 'react-native-paper-dropdown';
 import { useEntryStore } from '~/store/entryStore';
@@ -8,7 +8,12 @@ import { useCategoryStore } from '~/store/categoryStore';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Feather } from '@expo/vector-icons';
 
-export default function AddEntryPage() {
+import { Picker, PickerItem } from '~/components/nativewindui/Picker';
+import { useColorScheme } from '~/lib/useColorScheme';
+import { router } from 'expo-router';
+
+export default function NewEntryPage() {
+  const { colors } = useColorScheme();
   const addEntry = useEntryStore((s) => s.addEntry);
   const categories = useCategoryStore((s) => s.categories);
 
@@ -19,6 +24,8 @@ export default function AddEntryPage() {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const [showDropDown, setShowDropDown] = useState(false);
+
+  const [picker, setPicker] = React.useState('blue');
 
   const categoryOptions = categories.map((c) => ({
     label: c.name,
@@ -42,29 +49,29 @@ export default function AddEntryPage() {
     setNote('');
     setCategoryId(null);
     setDate(new Date());
-    alert('Entry added!');
+    // alert('Entry added!');
+    router.back();
   };
 
   return (
-    <View className="flex-1 p-4">
+    <ScrollView className="flex-1 gap-3 p-4">
       <Text variant="titleLarge" className="mb-4">
         Add New Entry
       </Text>
 
       {/* Amount */}
       <TextInput
-        label="Amount"
         placeholder="Amount"
         value={amount}
         onChangeText={setAmount}
         keyboardType="numeric"
         mode="outlined"
-        className="mb-3"
+        // className="mb-2 pb-4"
+        style={{ marginBottom: 10 }}
       />
 
       {/* Category */}
       <Dropdown
-        label="Category"
         placeholder="Select Category"
         mode="outlined"
         menuDownIcon={() => <Feather name="chevron-down" size={20} />}
@@ -103,18 +110,18 @@ export default function AddEntryPage() {
 
       {/* Note */}
       <TextInput
-        label="Note"
         placeholder="Note (optional)"
         value={note}
         onChangeText={setNote}
         mode="outlined"
-        className="mb-3"
+        // className="mb-3"
+        style={{ marginBottom: 10 }}
       />
 
       {/* Save */}
       <Button mode="contained" onPress={handleSave}>
         Save Entry
       </Button>
-    </View>
+    </ScrollView>
   );
 }

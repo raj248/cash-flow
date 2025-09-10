@@ -1,6 +1,8 @@
 import { Icon } from '@roninoss/icons';
+import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Linking, Platform, View } from 'react-native';
+import { Button } from '~/components/Button';
 
 import { Text } from '~/components/nativewindui/Text';
 import { useColorScheme } from '~/lib/useColorScheme';
@@ -27,6 +29,7 @@ export default function ModalScreen() {
           </Text>
           {' website.'}
         </Text>
+        <Button title="index template" onPress={() => router.push('/index_template')} />
       </View>
     </>
   );
