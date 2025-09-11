@@ -6,8 +6,9 @@ import {
   Image,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  Pressable,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import { Portal } from 'react-native-paper';
 import FloatingButton from '~/components/FloatingButton';
 import { useEntryStore } from '~/store/entryStore';
@@ -15,12 +16,16 @@ import { useCategoryStore } from '~/store/categoryStore';
 import { Feather } from '@expo/vector-icons';
 import { CategoryIcon } from '~/components/CategoryIcon';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useActionSheet } from '@expo/react-native-action-sheet';
+import { useColorScheme } from '~/lib/useColorScheme';
 export default function Home() {
   const { entries } = useEntryStore();
   const { categories } = useCategoryStore();
   const [atEnd, setAtEnd] = useState(false);
   const todayEntry = useEntryStore.getState().getTodayEntries();
 
+  const { showActionSheetWithOptions } = useActionSheet();
+  const { colorScheme, colors } = useColorScheme();
   // Detect end of scroll
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
@@ -155,9 +160,46 @@ export default function Home() {
             const category = categories.find((cat) => cat.id === entry.categoryId);
             const isIncome = category?.type === 'income';
             return (
-              <View
+              <Pressable
                 key={entry.id || index}
-                className="mb-2 flex-row items-center gap-3 rounded-xl bg-white p-3 shadow">
+                className="mb-2 flex-row items-center gap-3 rounded-xl bg-white p-3 shadow"
+                onPress={async () => {
+                  const options = ['Delete', 'Edit', 'Cancel'];
+                  const destructiveButtonIndex = 0;
+                  const cancelButtonIndex = 2;
+
+                  showActionSheetWithOptions(
+                    {
+                      options,
+                      cancelButtonIndex,
+                      destructiveButtonIndex,
+                      title: entry.amount.toString(),
+                      message: 'Description',
+                      containerStyle: {
+                        backgroundColor: colorScheme === 'dark' ? 'black' : 'white',
+                      },
+                      textStyle: {
+                        color: colors.foreground,
+                      },
+                    },
+                    (selectedIndex) => {
+                      switch (selectedIndex) {
+                        case 1:
+                          // Edit
+                          alert('This feature is not yet implemented.');
+                          break;
+
+                        case destructiveButtonIndex:
+                          // Delete
+                          useEntryStore.getState().removeEntry(entry.id);
+                          break;
+
+                        case cancelButtonIndex:
+                        // Canceled
+                      }
+                    }
+                  );
+                }}>
                 {category?.id && (
                   <CategoryIcon
                     categoryId={category.id}
@@ -176,7 +218,7 @@ export default function Home() {
                   className={`text-lg font-bold ${isIncome ? 'text-green-600' : 'text-red-600'}`}>
                   {isIncome ? '+' : '-'}₹{entry.amount}
                 </Text>
-              </View>
+              </Pressable>
             );
           })}
       </ScrollView>
