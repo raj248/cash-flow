@@ -223,7 +223,7 @@ export default function Home() {
       </ScrollView>
 
       <Portal>
-        <FloatingButton visible={!atEnd} />
+        <FloatingButton visible={!atEnd || todayEntry.length === 0} />
       </Portal>
     </SafeAreaView>
   );
