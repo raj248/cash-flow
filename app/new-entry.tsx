@@ -12,6 +12,7 @@ import { Picker, PickerItem } from '~/components/nativewindui/Picker';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { router } from 'expo-router';
 import CategoryDropdown from '~/components/CategoryDropdown';
+import CategoryDropdownPicker from '~/components/RNDropdown';
 
 export default function NewEntryPage() {
   const { colors } = useColorScheme();
@@ -90,12 +91,14 @@ export default function NewEntryPage() {
         // CustomDropdownItem={({ item })}
         options={categoryOptions}
       /> */}
-
+      {/* 
       <CategoryDropdown
         categoryId={categoryId}
         setCategoryId={setCategoryId}
         setShowDropDown={setShowDropDown}
-      />
+      /> */}
+
+      <CategoryDropdownPicker categoryId={categoryId} setCategoryId={setCategoryId} />
 
       {/* Date */}
       <Button mode="outlined" className="my-3" onPress={() => setShowDatePicker(true)}>

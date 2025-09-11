@@ -3,7 +3,6 @@ import { Text } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons';
 import { useCategoryStore } from '~/store/categoryStore';
 import { Dropdown, DropdownItemProps } from 'react-native-paper-dropdown';
-
 export default function CategoryDropdown({
   categoryId,
   setCategoryId,
