@@ -23,8 +23,9 @@ type CategoryState = {
   categories: Category[];
   addCategory: (category: Omit<Category, 'id' | 'createdAt' | 'updatedAt'>) => void;
   removeCategory: (id: string) => void;
-  populateDummyData: () => void;
   getCategoryIcon: (id: string) => { icon?: string; iconImage?: string; color?: string } | null;
+  setCategories: (cats: Category[]) => void;
+  populateDummyData: () => void;
 };
 
 export const useCategoryStore = create<CategoryState>()(
@@ -50,6 +51,7 @@ export const useCategoryStore = create<CategoryState>()(
           FileSystem.deleteAsync(categoryToRemove.iconImage, { idempotent: true }).catch((err) =>
             console.warn('Failed to delete icon image:', err)
           );
+          console.log('Deleted icon image:', categoryToRemove.iconImage);
         }
 
         set((state) => ({
@@ -67,6 +69,8 @@ export const useCategoryStore = create<CategoryState>()(
           color: category.color,
         };
       },
+
+      setCategories: (cats) => set({ categories: cats }),
 
       populateDummyData: () => {
         const now = new Date().toISOString();

@@ -29,6 +29,16 @@ const DrawerLayout = () => (
         ),
       }}
     />
+    <Drawer.Screen
+      name="category"
+      options={{
+        headerTitle: 'Category',
+        drawerLabel: 'Category',
+        drawerIcon: ({ size, color }) => (
+          <MaterialIcons name="category" size={size} color={color} />
+        ),
+      }}
+    />
   </Drawer>
 );
 

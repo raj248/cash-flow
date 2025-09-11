@@ -1,15 +1,104 @@
 import { Stack } from 'expo-router';
+import React from 'react';
+import { View } from 'react-native';
+import { Button, Card, Text } from 'react-native-paper';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import * as DocumentPicker from 'expo-document-picker';
+import { exportData, importData } from '~/utils/exportImport';
 
-import { Container } from '~/components/Container';
-import { ScreenContent } from '~/components/ScreenContent';
+async function saveToDownloads(json: string) {
+  // SAF → request access to a user folder
+  const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
 
-export default function Home() {
+  if (!permissions.granted) {
+    alert('Permission not granted');
+    return;
+  }
+
+  const fileUri = `${permissions.directoryUri}/backup.json`;
+
+  await FileSystem.StorageAccessFramework.createFileAsync(
+    permissions.directoryUri,
+    'backup',
+    'application/json'
+  )
+    .then(async (uri) => {
+      await FileSystem.writeAsStringAsync(uri, json, { encoding: FileSystem.EncodingType.UTF8 });
+      alert('Backup saved successfully!');
+    })
+    .catch((err) => console.error('Error saving file', err));
+}
+
+async function handleExport() {
+  const data = exportData();
+  const json = JSON.stringify(data, null, 2);
+  const path = FileSystem.documentDirectory + 'backup.json';
+
+  await FileSystem.writeAsStringAsync(path, json, { encoding: 'utf8' });
+  await Sharing.shareAsync(path);
+}
+
+async function handleExportToDownloads() {
+  const data = exportData();
+  const json = JSON.stringify(data, null, 2);
+  const path = FileSystem.documentDirectory + 'backup.json';
+
+  await FileSystem.writeAsStringAsync(path, json, { encoding: 'utf8' });
+  // await Sharing.shareAsync(path);
+  await saveToDownloads(json);
+}
+
+async function handleImport() {
+  const res = await DocumentPicker.getDocumentAsync({ type: 'application/json' });
+  if (res.canceled) return;
+
+  const json = await FileSystem.readAsStringAsync(res.assets[0].uri);
+  const data = JSON.parse(json);
+  importData(data);
+}
+
+export default function BackupScreen() {
   return (
     <>
-      <Stack.Screen options={{ title: 'Tab One' }} />
-      <Container>
-        <ScreenContent path="app/(drawer)/(tabs)/index.tsx" title="Tab One" />
-      </Container>
+      <Stack.Screen options={{ title: 'Backup & Restore' }} />
+      <View style={{ flex: 1, justifyContent: 'center', padding: 16 }}>
+        <Card style={{ marginBottom: 20 }}>
+          <Card.Title title="Export Data" />
+          <Card.Content>
+            <Text>Save all your entries and categories as a backup file.</Text>
+          </Card.Content>
+          <Card.Actions>
+            <Button mode="contained" onPress={handleExport}>
+              Export
+            </Button>
+          </Card.Actions>
+        </Card>
+
+        <Card style={{ marginBottom: 20 }}>
+          <Card.Title title="Export to SD Card" />
+          <Card.Content>
+            <Text>Save all your entries and categories as a backup file.</Text>
+          </Card.Content>
+          <Card.Actions>
+            <Button mode="outlined" onPress={handleExportToDownloads}>
+              Export (SD Card)
+            </Button>
+          </Card.Actions>
+        </Card>
+
+        <Card>
+          <Card.Title title="Import Data" />
+          <Card.Content>
+            <Text>Restore your data from a backup JSON file.</Text>
+          </Card.Content>
+          <Card.Actions>
+            <Button mode="contained-tonal" onPress={handleImport}>
+              Import
+            </Button>
+          </Card.Actions>
+        </Card>
+      </View>
     </>
   );
 }

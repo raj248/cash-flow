@@ -156,7 +156,6 @@ export default function Home() {
         {todayEntry //entries
           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
           .map((entry, index) => {
-            console.log(entry.date);
             const category = categories.find((cat) => cat.id === entry.categoryId);
             const isIncome = category?.type === 'income';
             return (

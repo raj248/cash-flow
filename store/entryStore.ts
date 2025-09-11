@@ -24,6 +24,8 @@ type EntryState = {
   restoreEntry: (id: string) => void; // undo soft delete
   getTodayEntries: () => Entry[]; // ✅ new
   getEntriesByDate: (date: string) => Entry[];
+
+  setEntries: (entries: Entry[]) => void;
   populateDummyData: () => void;
 };
 
@@ -81,6 +83,8 @@ export const useEntryStore = create<EntryState>()(
         const all = get().entries;
         return all.filter((e) => e.date === date);
       },
+
+      setEntries: (entries) => set({ entries }),
 
       populateDummyData: () => {
         const categories = useCategoryStore.getState().categories;
