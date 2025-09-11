@@ -22,6 +22,8 @@ type EntryState = {
   removeEntry: (id: string, soft?: boolean) => void;
   updateEntry: (id: string, updates: Partial<Omit<Entry, 'id' | 'createdAt'>>) => void;
   restoreEntry: (id: string) => void; // undo soft delete
+  getTodayEntries: () => Entry[]; // ✅ new
+  getEntriesByDate: (date: string) => Entry[];
   populateDummyData: () => void;
 };
 
@@ -67,6 +69,18 @@ export const useEntryStore = create<EntryState>()(
         set((state) => ({
           entries: state.entries.map((e) => (e.id === id ? { ...e, deletedAt: undefined } : e)),
         })),
+
+      getTodayEntries: () => {
+        const today = new Date().toISOString().split('T')[0];
+        return get().entries.filter(
+          (e) => e.date === today && !e.deletedAt // ignore soft-deleted
+        );
+      },
+
+      getEntriesByDate: (date) => {
+        const all = get().entries;
+        return all.filter((e) => e.date === date);
+      },
 
       populateDummyData: () => {
         const categories = useCategoryStore.getState().categories;

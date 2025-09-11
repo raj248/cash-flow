@@ -19,6 +19,7 @@ export default function Home() {
   const { entries } = useEntryStore();
   const { categories } = useCategoryStore();
   const [atEnd, setAtEnd] = useState(false);
+  const todayEntry = useEntryStore.getState().getTodayEntries();
 
   // Detect end of scroll
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -145,10 +146,12 @@ export default function Home() {
 
         {/* List of all entries in a flatlist */}
         <Text className="mb-2 text-lg font-bold">All Entries</Text>
-        {entries.length === 0 && <Text className="text-gray-500">No entries added yet.</Text>}
-        {entries
+        {todayEntry.length === 0 && <Text className="text-gray-500">No entries added yet.</Text>}
+        {/* {entries.length === 0 && <Text className="text-gray-500">No entries added yet.</Text>} */}
+        {todayEntry //entries
           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
           .map((entry, index) => {
+            console.log(entry.date);
             const category = categories.find((cat) => cat.id === entry.categoryId);
             const isIncome = category?.type === 'income';
             return (
