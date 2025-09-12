@@ -36,14 +36,14 @@ export default function Home() {
   };
 
   // Calculate totals
-  const incomeTotal = entries
+  const incomeTotal = todayEntry
     .filter((e) => {
       const cat = categories.find((c) => c.id === e.categoryId);
       return cat?.type === 'income';
     })
     .reduce((sum, e) => sum + e.amount, 0);
 
-  const expenseTotal = entries
+  const expenseTotal = todayEntry
     .filter((e) => {
       const cat = categories.find((c) => c.id === e.categoryId);
       return cat?.type === 'expense';
@@ -54,7 +54,7 @@ export default function Home() {
 
   // Group entries by category
   const groupedByCategory = categories.map((cat) => {
-    const catEntries = entries.filter((e) => e.categoryId === cat.id);
+    const catEntries = todayEntry.filter((e) => e.categoryId === cat.id);
     const total = catEntries.reduce((sum, e) => sum + e.amount, 0);
     return { ...cat, total };
   });
