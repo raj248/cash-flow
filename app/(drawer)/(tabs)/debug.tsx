@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import { Button } from '~/components/Button';
 
 import { Container } from '~/components/Container';
@@ -25,6 +25,7 @@ export default function Debug() {
       <Button title="Populate Data" onPress={populate} />
       <Button title="Get Category" onPress={() => console.log(entries)} />
       <Button title="Get Entries" onPress={() => console.log(categories)} />
+      <Button title="Breakdown" onPress={() => router.push('/expense-breakdown')} />
 
       <Button
         title="Get Entry by date"

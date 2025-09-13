@@ -30,7 +30,7 @@ export default function FloatingButton({ visible }: { visible: boolean }) {
         {
           icon: 'bell',
           label: 'Remind',
-          onPress: () => router.push('/new-entry'),
+          onPress: () => router.push('/expense-breakdown'),
         },
         {
           icon: 'plus-circle',
