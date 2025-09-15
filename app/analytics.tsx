@@ -1,7 +1,7 @@
 // Analytics.tsx
 import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, Text, View } from 'react-native';
-import { LineChart } from 'react-native-gifted-charts';
+import { CurveType, LineChart } from 'react-native-gifted-charts';
 import { Button } from '../components/Button';
 
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -45,6 +45,9 @@ export default function Analytics() {
             data2={chartData.income} // second line
             height={250}
             curved
+            // curvature={0.2}
+            curveType={CurveType.CUBIC}
+            // areaChart
             thickness={2}
             color1="#dc2626" // expense (red)
             color2="#16a34a" // income (green)
