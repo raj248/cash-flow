@@ -4,72 +4,89 @@ import { SafeAreaView, ScrollView, Text, View } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 import { Button } from '../components/Button';
 
+const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
 const generateRandomData = () => {
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  return days.map((day) => ({
-    value: Math.floor(Math.random() * 500) + 100,
+  const income = days.map((day) => ({
+    value: Math.floor(Math.random() * 800) + 200,
     label: day,
-    dataPointColor: '#2563eb', // blue-600
-    dataPointRadius: 5,
+    dataPointColor: '#16a34a', // green-600
+    dataPointRadius: 3,
   }));
+
+  const expense = days.map((day) => ({
+    value: Math.floor(Math.random() * 600) + 100,
+    label: day,
+    dataPointColor: '#dc2626', // red-600
+    dataPointRadius: 3,
+  }));
+
+  return { income, expense };
 };
 
 export default function Analytics() {
-  const [data, setData] = useState(generateRandomData());
+  const [chartData, setChartData] = useState(generateRandomData());
 
-  const total = data.reduce((acc, curr) => acc + (curr.value ?? 0), 0);
-  const avg = (total / data.length).toFixed(1);
+  const totalIncome = chartData.income.reduce((acc, curr) => acc + (curr.value ?? 0), 0);
+  const totalExpense = chartData.expense.reduce((acc, curr) => acc + (curr.value ?? 0), 0);
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-black">
       <ScrollView contentContainerClassName="p-4">
         {/* Title */}
         <Text className="mb-4 text-xl font-bold text-black dark:text-white">
-          Weekly Expense Analytics
+          Weekly Income vs Expense
         </Text>
 
         {/* Line Chart */}
         <View className="mb-6 items-center">
           <LineChart
-            data={data}
-            height={200}
+            data={chartData.expense} // first line
+            data2={chartData.income} // second line
+            height={250}
             curved
             thickness={2}
-            extrapolateMissingValues
-            color="#2563eb"
+            color1="#dc2626" // expense (red)
+            color2="#16a34a" // income (green)
             yAxisColor="#d1d5db"
             xAxisColor="#d1d5db"
             xAxisLabelTextStyle={{ color: '#6b7280', fontSize: 12 }}
             yAxisTextStyle={{ color: '#6b7280', fontSize: 12 }}
-            showDataPointLabelOnFocus
-            dataPointsColor="#2563eb"
-            dataPointsRadius={5}
+            dataPointsColor1="#dc2626"
+            dataPointsColor2="#16a34a"
+            dataPointsRadius={1}
             initialSpacing={0}
-            spacing={50}
+            spacing={55}
             isAnimated
-            animationDuration={1200}
-            areaChart
-            startFillColor="#2563eb"
-            endFillColor="#ffffff"
-            startOpacity={0.3}
-            endOpacity={0}
-            showStripOnFocus
-            showDataPointOnFocus
-            showTextOnFocus
+            animationDuration={1000}
             focusEnabled
-            stripColor="#2563eb55"
+            showStripOnFocus
+            showTextOnFocus
+            stripColor="#9ca3af55"
+            maxValue={
+              Math.max(
+                ...chartData.expense.map((d) => d.value),
+                ...chartData.income.map((d) => d.value)
+              ) + 100
+            }
           />
         </View>
 
         {/* Stats */}
         <View className="mt-2 space-y-2">
-          <Text className="text-sm text-black dark:text-white">Total Weekly Expense: ₹{total}</Text>
-          <Text className="text-sm text-black dark:text-white">Average per Day: ₹{avg}</Text>
+          <Text className="text-sm text-black dark:text-white">Total Income: ₹{totalIncome}</Text>
+          <Text className="text-sm text-black dark:text-white">Total Expense: ₹{totalExpense}</Text>
+          <Text
+            className={`text-sm font-semibold ${
+              totalIncome - totalExpense >= 0 ? 'text-green-600' : 'text-red-600'
+            }`}>
+            Net Balance: ₹{totalIncome - totalExpense}
+          </Text>
         </View>
 
         {/* Refresh Button */}
         <View className="mt-6">
-          <Button title="Regenerate Data" onPress={() => setData(generateRandomData())} />
+          <Button title="Regenerate Data" onPress={() => setChartData(generateRandomData())} />
         </View>
       </ScrollView>
     </SafeAreaView>
