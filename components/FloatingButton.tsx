@@ -25,7 +25,7 @@ export default function FloatingButton({ visible }: { visible: boolean }) {
         {
           icon: 'mail',
           label: 'Email',
-          onPress: () => console.log('Pressed email'),
+          onPress: () => router.push('/analytics'),
         },
         {
           icon: 'bell',

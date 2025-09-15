@@ -1,7 +1,7 @@
 // ExpenseBreakdown.tsx
 import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, Text, View } from 'react-native';
-import { PieChart } from 'react-native-gifted-charts';
+import { PieChart, LineChart } from 'react-native-gifted-charts';
 import { Button } from '../components/Button';
 
 const categories = ['Food', 'Rent', 'Travel', 'Shopping', 'Bills'];
