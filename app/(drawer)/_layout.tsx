@@ -5,7 +5,7 @@ import { Drawer } from 'expo-router/drawer';
 import { HeaderButton } from '../../components/HeaderButton';
 
 const DrawerLayout = () => (
-  <Drawer>
+  <Drawer backBehavior="history">
     <Drawer.Screen
       name="index"
       options={{
