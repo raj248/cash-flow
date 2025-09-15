@@ -8,7 +8,7 @@ import {
   NativeScrollEvent,
   Pressable,
 } from 'react-native';
-import React, { use, useState } from 'react';
+import React, { useState } from 'react';
 import { Portal } from 'react-native-paper';
 import FloatingButton from '~/components/FloatingButton';
 import { useEntryStore } from '~/store/entryStore';
@@ -18,43 +18,37 @@ import { CategoryIcon } from '~/components/CategoryIcon';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useColorScheme } from '~/lib/useColorScheme';
+import DateTimePicker from '@react-native-community/datetimepicker'; // 👈 install this
+
 export default function Home() {
-  const { entries } = useEntryStore();
+  const { entries, getEntriesByDate } = useEntryStore();
   const { categories } = useCategoryStore();
   const [atEnd, setAtEnd] = useState(false);
-  const todayEntry = useEntryStore.getState().getTodayEntries();
+
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
 
   const { showActionSheetWithOptions } = useActionSheet();
   const { colorScheme, colors } = useColorScheme();
-  // Detect end of scroll
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-    const paddingToBottom = 20; // threshold before considering "end"
-    const isEnd =
-      layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
-    setAtEnd(isEnd);
-  };
 
-  // Calculate totals
-  const incomeTotal = todayEntry
-    .filter((e) => {
-      const cat = categories.find((c) => c.id === e.categoryId);
-      return cat?.type === 'income';
-    })
+  // Filtered entries by selectedDate
+  const formattedDate = selectedDate.toISOString().split('T')[0];
+  const dayEntries = getEntriesByDate(formattedDate);
+
+  // Totals
+  const incomeTotal = dayEntries
+    .filter((e) => categories.find((c) => c.id === e.categoryId)?.type === 'income')
     .reduce((sum, e) => sum + e.amount, 0);
 
-  const expenseTotal = todayEntry
-    .filter((e) => {
-      const cat = categories.find((c) => c.id === e.categoryId);
-      return cat?.type === 'expense';
-    })
+  const expenseTotal = dayEntries
+    .filter((e) => categories.find((c) => c.id === e.categoryId)?.type === 'expense')
     .reduce((sum, e) => sum + e.amount, 0);
 
   const netBalance = incomeTotal - expenseTotal;
 
-  // Group entries by category
+  // Category grouping
   const groupedByCategory = categories.map((cat) => {
-    const catEntries = todayEntry.filter((e) => e.categoryId === cat.id);
+    const catEntries = dayEntries.filter((e) => e.categoryId === cat.id);
     const total = catEntries.reduce((sum, e) => sum + e.amount, 0);
     return { ...cat, total };
   });
@@ -84,14 +78,40 @@ export default function Home() {
     return null;
   };
 
+  // Scroll detection
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const paddingToBottom = 20;
+    setAtEnd(layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom);
+  };
+
   return (
     <SafeAreaView className="flex-1" edges={['bottom', 'left', 'right']}>
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}
         className="flex-1 bg-gray-100 p-4">
-        {/* Header */}
-        <Text className="mb-4 text-center text-2xl font-bold">Cash Flow - Daily Khata</Text>
+        {/* Header with Date Selector */}
+        <View className="mb-4 flex-row items-center justify-between">
+          <Text className="text-2xl font-bold">Cash Flow - Daily Khata</Text>
+          <TouchableOpacity
+            className="rounded bg-blue-500 px-3 py-2"
+            onPress={() => setShowPicker(true)}>
+            <Text className="text-white">{selectedDate.toLocaleDateString()}</Text>
+          </TouchableOpacity>
+        </View>
+
+        {showPicker && (
+          <DateTimePicker
+            value={selectedDate}
+            mode="date"
+            display="default"
+            onChange={(event, date) => {
+              setShowPicker(false);
+              if (date) setSelectedDate(date);
+            }}
+          />
+        )}
 
         {/* Net Balance Card */}
         <View className="mb-4 rounded-2xl bg-white p-4 shadow">
@@ -126,7 +146,7 @@ export default function Home() {
           </View>
         </View>
 
-        {/* Expenditure Section */}
+        {/* Expense Section */}
         <View className="mb-4">
           <Text className="mb-2 text-lg font-bold">Expenditures</Text>
           <View className="flex-row flex-wrap justify-between">
@@ -141,64 +161,24 @@ export default function Home() {
                 </View>
               </View>
             ))}
-
-            {/* Misc Card */}
-            <TouchableOpacity className="w-full rounded-xl bg-blue-100 p-4 shadow">
-              <Text className="font-semibold text-blue-700">+ Add Misc</Text>
-            </TouchableOpacity>
           </View>
         </View>
 
-        {/* List of all entries in a flatlist */}
-        <Text className="mb-2 text-lg font-bold">All Entries</Text>
-        {todayEntry.length === 0 && <Text className="text-gray-500">No entries added yet.</Text>}
-        {/* {entries.length === 0 && <Text className="text-gray-500">No entries added yet.</Text>} */}
-        {todayEntry //entries
+        {/* All Entries */}
+        <Text className="mb-2 text-lg font-bold">Entries</Text>
+        {dayEntries.length === 0 && (
+          <Text className="text-gray-500">No entries for this date.</Text>
+        )}
+
+        {dayEntries
           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-          .map((entry, index) => {
+          .map((entry) => {
             const category = categories.find((cat) => cat.id === entry.categoryId);
             const isIncome = category?.type === 'income';
             return (
               <Pressable
-                key={entry.id || index}
-                className="mb-2 flex-row items-center gap-3 rounded-xl bg-white p-3 shadow"
-                onPress={async () => {
-                  const options = ['Delete', 'Edit', 'Cancel'];
-                  const destructiveButtonIndex = 0;
-                  const cancelButtonIndex = 2;
-
-                  showActionSheetWithOptions(
-                    {
-                      options,
-                      cancelButtonIndex,
-                      destructiveButtonIndex,
-                      title: entry.amount.toString(),
-                      message: 'Description',
-                      containerStyle: {
-                        backgroundColor: colorScheme === 'dark' ? 'black' : 'white',
-                      },
-                      textStyle: {
-                        color: colors.foreground,
-                      },
-                    },
-                    (selectedIndex) => {
-                      switch (selectedIndex) {
-                        case 1:
-                          // Edit
-                          alert('This feature is not yet implemented.');
-                          break;
-
-                        case destructiveButtonIndex:
-                          // Delete
-                          useEntryStore.getState().removeEntry(entry.id);
-                          break;
-
-                        case cancelButtonIndex:
-                        // Canceled
-                      }
-                    }
-                  );
-                }}>
+                key={entry.id}
+                className="mb-2 flex-row items-center gap-3 rounded-xl bg-white p-3 shadow">
                 {category?.id && (
                   <CategoryIcon
                     categoryId={category.id}
@@ -223,7 +203,7 @@ export default function Home() {
       </ScrollView>
 
       <Portal>
-        <FloatingButton visible={!atEnd || todayEntry.length === 0} />
+        <FloatingButton visible={!atEnd || dayEntries.length === 0} />
       </Portal>
     </SafeAreaView>
   );

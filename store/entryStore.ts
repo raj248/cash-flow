@@ -92,45 +92,33 @@ export const useEntryStore = create<EntryState>()(
           console.warn('No categories found. Populate categories first.');
           return;
         }
+
+        const dummyEntries: Entry[] = [];
         const now = new Date();
-        const dummyEntries: Entry[] = [
-          {
-            id: nanoid(),
-            categoryId: categories[0].id,
-            amount: 300,
-            date: now.toISOString().split('T')[0],
-            note: 'Dinner with friends',
-            createdAt: now.toISOString(),
-            updatedAt: now.toISOString(),
-          },
-          {
-            id: nanoid(),
-            categoryId: categories[1].id,
-            amount: 50,
-            date: now.toISOString().split('T')[0],
-            note: 'Bus ticket',
-            createdAt: now.toISOString(),
-            updatedAt: now.toISOString(),
-          },
-          {
-            id: nanoid(),
-            categoryId: categories[2].id,
-            amount: 2000,
-            date: now.toISOString().split('T')[0],
-            note: 'Monthly salary',
-            createdAt: now.toISOString(),
-            updatedAt: now.toISOString(),
-          },
-          {
-            id: nanoid(),
-            categoryId: categories[3].id,
-            amount: 500,
-            date: now.toISOString().split('T')[0],
-            note: 'Freelance project',
-            createdAt: now.toISOString(),
-            updatedAt: now.toISOString(),
-          },
-        ];
+
+        // Loop through last 30 days
+        for (let i = 0; i < 30; i++) {
+          const day = new Date(now);
+          day.setDate(now.getDate() - i);
+          const dateStr = day.toISOString().split('T')[0];
+
+          // For each day, pick 1–3 random categories
+          const numEntries = Math.floor(Math.random() * 5) + 1;
+          for (let j = 0; j < numEntries; j++) {
+            const category = categories[Math.floor(Math.random() * categories.length)];
+
+            dummyEntries.push({
+              id: nanoid(),
+              categoryId: category.id,
+              amount: Math.floor(Math.random() * 1000) + 50, // ₹50 – ₹1050
+              date: dateStr,
+              note: `Sample entry in ${category.name}`,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            });
+          }
+        }
+
         set({ entries: dummyEntries });
       },
     }),
