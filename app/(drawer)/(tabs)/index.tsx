@@ -60,7 +60,7 @@ async function handleImport() {
 export default function BackupScreen() {
   return (
     <>
-      <Stack.Screen options={{ title: 'Backup & Restore' }} />
+      {/* <Stack.Screen options={{ title: 'Backup & Restore' }} /> */}
       <View style={{ flex: 1, justifyContent: 'center', padding: 16 }}>
         <Card style={{ marginBottom: 20 }}>
           <Card.Title title="Export Data" />

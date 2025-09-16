@@ -6,7 +6,6 @@ import { FAB } from 'react-native-paper';
 export default function FloatingButton({ visible }: { visible: boolean }) {
   const [state, setState] = useState({ open: false });
   const segments = useSegments();
-  console.log('Segments : ', segments);
   const onStateChange = ({ open }: { open: boolean }) => setState({ open });
 
   const { open } = state;
