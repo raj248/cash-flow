@@ -6,6 +6,7 @@ import { TabBarIcon } from '~/components/TabBarIcon';
 import { Stack, withLayoutContext } from 'expo-router';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useColorScheme } from '~/lib/useColorScheme';
 
 // Create a top tab navigator
 const { Navigator } = createMaterialTopTabNavigator();
@@ -19,15 +20,24 @@ const NoRippleButton = ({ children, onPress, style }: any) => (
   </TouchableOpacity>
 );
 export default function TabLayout() {
+  const { isDarkColorScheme } = useColorScheme();
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-black">
-      <Stack.Screen options={{ headerShown: false }} />
+      {/* <Stack.Screen options={{ headerShown: false }} /> */}
       <Tabs
-        tabBarPosition="top"
+        tabBarPosition="bottom"
+        initialRouteName="two"
         screenOptions={{
           // headerShown: false,
           tabBarActiveTintColor: 'black',
           swipeEnabled: true, // 👈 enables left/right swipe
+          tabBarLabelStyle: {
+            fontSize: 12,
+            color: isDarkColorScheme ? 'white' : 'black',
+          },
+          tabBarIndicatorStyle: {
+            backgroundColor: 'green',
+          },
 
           // tabBarButton: (props) => <NoRippleButton {...props} />,
         }}>

@@ -19,6 +19,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useColorScheme } from '~/lib/useColorScheme';
 import DateTimePicker from '@react-native-community/datetimepicker'; // 👈 install this
+import { cn } from '~/lib/cn';
 
 export default function Home() {
   const { entries, getEntriesByDate } = useEntryStore();
@@ -29,7 +30,7 @@ export default function Home() {
   const [showPicker, setShowPicker] = useState(false);
 
   const { showActionSheetWithOptions } = useActionSheet();
-  const { colorScheme, colors } = useColorScheme();
+  const { colorScheme, colors, isDarkColorScheme } = useColorScheme();
 
   // Filtered entries by selectedDate
   const formattedDate = selectedDate.toISOString().split('T')[0];
@@ -86,18 +87,18 @@ export default function Home() {
   };
 
   return (
-    <SafeAreaView className="flex-1" edges={['bottom', 'left', 'right']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['bottom', 'left', 'right']}>
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}
-        className="flex-1 bg-gray-100 p-4">
+        className="flex-1 bg-background p-4">
         {/* Header with Date Selector */}
         <View className="mb-4 flex-row items-center justify-between">
-          <Text className="text-2xl font-bold">Cash Flow - Daily Khata</Text>
+          <Text className="text-2xl font-bold text-foreground">Cash Flow - Daily Khata</Text>
           <TouchableOpacity
-            className="rounded bg-blue-500 px-3 py-2"
+            className="rounded bg-primary px-3 py-2"
             onPress={() => setShowPicker(true)}>
-            <Text className="text-white">{selectedDate.toLocaleDateString()}</Text>
+            <Text className="text-primary-foreground">{selectedDate.toLocaleDateString()}</Text>
           </TouchableOpacity>
         </View>
 
@@ -114,32 +115,36 @@ export default function Home() {
         )}
 
         {/* Net Balance Card */}
-        <View className="mb-4 rounded-2xl bg-white p-4 shadow">
-          <Text className="text-lg font-semibold text-gray-600">Net Balance</Text>
+        <View className="mb-4 rounded-2xl bg-card p-4 shadow">
+          <Text className="text-lg font-semibold text-muted-foreground">Net Balance</Text>
           <Text
             className={`mt-2 text-3xl font-bold ${
-              netBalance >= 0 ? 'text-green-600' : 'text-red-600'
+              netBalance >= 0 ? 'text-green-500' : 'text-red-500'
             }`}>
             ₹{netBalance}
           </Text>
           <View className="mt-2 flex-row justify-between">
-            <Text className="text-gray-500">Income: ₹{incomeTotal}</Text>
-            <Text className="text-gray-500">Expense: ₹{expenseTotal}</Text>
+            <Text className="text-muted-foreground">Income: ₹{incomeTotal}</Text>
+            <Text className="text-muted-foreground">Expense: ₹{expenseTotal}</Text>
           </View>
         </View>
 
         {/* Income Section */}
         <View className="mb-4">
-          <Text className="mb-2 text-lg font-bold">Income Sources</Text>
+          <Text className="mb-2 text-lg font-bold text-foreground">Income Sources</Text>
           <View className="flex-row flex-wrap justify-between">
             {incomeCategories.map((cat) => (
               <View
                 key={cat.id}
-                className="mb-3 w-[48%] flex-row items-center rounded-xl bg-green-100 p-4 shadow">
+                className="mb-3 w-[48%] flex-row items-center rounded-xl bg-green-100 p-4 shadow dark:bg-green-900">
                 {renderCategoryIcon(cat)}
                 <View>
-                  <Text className="font-semibold text-green-700">{cat.name}</Text>
-                  <Text className="mt-1 text-lg font-bold text-green-800">₹{cat.total}</Text>
+                  <Text className="font-semibold text-green-700 dark:text-green-300">
+                    {cat.name}
+                  </Text>
+                  <Text className="mt-1 text-lg font-bold text-green-800 dark:text-green-200">
+                    ₹{cat.total}
+                  </Text>
                 </View>
               </View>
             ))}
@@ -148,16 +153,18 @@ export default function Home() {
 
         {/* Expense Section */}
         <View className="mb-4">
-          <Text className="mb-2 text-lg font-bold">Expenditures</Text>
+          <Text className="mb-2 text-lg font-bold text-foreground">Expenditures</Text>
           <View className="flex-row flex-wrap justify-between">
             {expenseCategories.map((cat) => (
               <View
                 key={cat.id}
-                className="mb-3 w-[48%] flex-row items-center rounded-xl bg-red-100 p-4 shadow">
+                className="mb-3 w-[48%] flex-row items-center rounded-xl bg-red-100 p-4 shadow dark:bg-red-900">
                 {renderCategoryIcon(cat)}
                 <View>
-                  <Text className="font-semibold text-red-700">{cat.name}</Text>
-                  <Text className="mt-1 text-lg font-bold text-red-800">₹{cat.total}</Text>
+                  <Text className="font-semibold text-red-700 dark:text-red-300">{cat.name}</Text>
+                  <Text className="mt-1 text-lg font-bold text-red-800 dark:text-red-200">
+                    ₹{cat.total}
+                  </Text>
                 </View>
               </View>
             ))}
@@ -165,9 +172,9 @@ export default function Home() {
         </View>
 
         {/* All Entries */}
-        <Text className="mb-2 text-lg font-bold">Entries</Text>
+        <Text className="mb-2 text-lg font-bold text-foreground">Entries</Text>
         {dayEntries.length === 0 && (
-          <Text className="text-gray-500">No entries for this date.</Text>
+          <Text className="text-muted-foreground">No entries for this date.</Text>
         )}
 
         {dayEntries
@@ -178,7 +185,7 @@ export default function Home() {
             return (
               <Pressable
                 key={entry.id}
-                className="mb-2 flex-row items-center gap-3 rounded-xl bg-white p-3 shadow">
+                className="mb-2 flex-row items-center gap-3 rounded-xl bg-card p-3 shadow">
                 {category?.id && (
                   <CategoryIcon
                     categoryId={category.id}
@@ -187,14 +194,14 @@ export default function Home() {
                   />
                 )}
                 <View className="flex-1">
-                  <Text className="font-semibold">{category?.name || 'N/A'}</Text>
-                  <Text className="text-sm text-gray-500">{entry.note}</Text>
-                  <Text className="text-xs text-gray-400">
+                  <Text className="font-semibold text-foreground">{category?.name || 'N/A'}</Text>
+                  <Text className="text-sm text-muted-foreground">{entry.note}</Text>
+                  <Text className="text-xs text-muted-foreground">
                     {new Date(entry.date).toLocaleDateString()}
                   </Text>
                 </View>
                 <Text
-                  className={`text-lg font-bold ${isIncome ? 'text-green-600' : 'text-red-600'}`}>
+                  className={`text-lg font-bold ${isIncome ? 'text-green-500' : 'text-red-500'}`}>
                   {isIncome ? '+' : '-'}₹{entry.amount}
                 </Text>
               </Pressable>
