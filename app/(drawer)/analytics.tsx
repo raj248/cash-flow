@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, Text, View } from 'react-native';
 import { CurveType, LineChart } from 'react-native-gifted-charts';
-import { Button } from '../components/Button';
+import { Button } from '~/components/Button';
 
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 

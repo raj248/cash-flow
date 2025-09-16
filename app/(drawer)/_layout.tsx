@@ -1,4 +1,4 @@
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 
@@ -9,24 +9,17 @@ const DrawerLayout = () => (
     <Drawer.Screen
       name="index"
       options={{
-        headerTitle: 'Home',
-        drawerLabel: 'Home',
-        drawerIcon: ({ size, color }) => <Ionicons name="home-outline" size={size} color={color} />,
+        headerTitle: 'Today',
+        drawerLabel: 'Today',
+        drawerIcon: ({ size, color }) => <Feather name="home" size={size} color={color} />,
       }}
     />
     <Drawer.Screen
-      name="(tabs)"
+      name="analytics"
       options={{
-        headerTitle: 'Tabs',
-        drawerLabel: 'Tabs',
-        drawerIcon: ({ size, color }) => (
-          <MaterialIcons name="border-bottom" size={size} color={color} />
-        ),
-        headerRight: () => (
-          <Link href="/modal" asChild>
-            <HeaderButton />
-          </Link>
-        ),
+        headerTitle: 'Analytics',
+        drawerLabel: 'Analytics',
+        drawerIcon: ({ size, color }) => <Feather name="activity" size={size} color={color} />,
       }}
     />
     <Drawer.Screen
@@ -34,8 +27,35 @@ const DrawerLayout = () => (
       options={{
         headerTitle: 'Category',
         drawerLabel: 'Category',
-        drawerIcon: ({ size, color }) => (
-          <MaterialIcons name="category" size={size} color={color} />
+        drawerIcon: ({ size, color }) => <Feather name="grid" size={size} color={color} />,
+      }}
+    />
+    <Drawer.Screen
+      name="import-export"
+      options={{
+        headerTitle: 'Backup & Restore',
+        drawerLabel: 'Backup & Restore',
+        drawerIcon: ({ size, color }) => <Feather name="cloud" size={size} color={color} />,
+      }}
+    />
+    <Drawer.Screen
+      name="settings"
+      options={{
+        headerTitle: 'Settings',
+        drawerLabel: 'Settings',
+        drawerIcon: ({ size, color }) => <Feather name="settings" size={size} color={color} />,
+      }}
+    />
+    <Drawer.Screen
+      name="(tabs)"
+      options={{
+        headerTitle: 'Tabs',
+        drawerLabel: 'Tabs',
+        drawerIcon: ({ size, color }) => <Feather name="airplay" size={size} color={color} />,
+        headerRight: () => (
+          <Link href="/modal" asChild>
+            <HeaderButton />
+          </Link>
         ),
       }}
     />

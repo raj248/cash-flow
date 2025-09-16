@@ -1,11 +1,12 @@
-import { router } from 'expo-router';
+import { router, useSegments } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { FAB } from 'react-native-paper';
 
 export default function FloatingButton({ visible }: { visible: boolean }) {
   const [state, setState] = useState({ open: false });
-
+  const segments = useSegments();
+  console.log('Segments : ', segments);
   const onStateChange = ({ open }: { open: boolean }) => setState({ open });
 
   const { open } = state;
@@ -13,7 +14,7 @@ export default function FloatingButton({ visible }: { visible: boolean }) {
   return (
     <FAB.Group
       open={open}
-      visible={visible}
+      visible={visible && (segments.length > 1 ? segments[1] !== '(tabs)' : true)}
       icon={open ? 'calendar' : 'plus'}
       actions={[
         { icon: 'plus', onPress: () => console.log('Pressed add') },
@@ -25,7 +26,7 @@ export default function FloatingButton({ visible }: { visible: boolean }) {
         {
           icon: 'mail',
           label: 'Email',
-          onPress: () => router.push('/analytics'),
+          onPress: () => router.push('/(drawer)/analytics'),
         },
         {
           icon: 'bell',

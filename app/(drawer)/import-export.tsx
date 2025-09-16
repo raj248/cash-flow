@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import React from 'react';
 import { View } from 'react-native';
 import { Button, Card, Text } from 'react-native-paper';
 import * as FileSystem from 'expo-file-system';
