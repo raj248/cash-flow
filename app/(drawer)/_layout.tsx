@@ -9,7 +9,7 @@ const DrawerLayout = () => (
     <Drawer.Screen
       name="index"
       options={{
-        headerTitle: 'Today',
+        headerTitle: 'Cash Flow ',
         drawerLabel: 'Today',
         drawerIcon: ({ size, color }) => <Feather name="home" size={size} color={color} />,
       }}

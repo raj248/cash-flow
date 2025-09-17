@@ -94,7 +94,7 @@ export default function Home() {
         className="flex-1 bg-background p-4">
         {/* Header with Date Selector */}
         <View className="mb-4 flex-row items-center justify-between">
-          <Text className="text-2xl font-bold text-foreground">Cash Flow - Daily Khata</Text>
+          {/* <Text className="text-2xl font-bold text-foreground">Today's Entry</Text> */}
           <TouchableOpacity
             className="rounded bg-primary px-3 py-2"
             onPress={() => setShowPicker(true)}>
