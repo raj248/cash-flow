@@ -22,6 +22,8 @@ import { useFonts } from 'expo-font';
 
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import AppStatusBar from '~/components/AppStatusBar';
+import useThemeAnimation from '~/hooks/useThemeAnimation';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -46,14 +48,10 @@ export default function RootLayout() {
     }
   }, [fontsLoaded]);
 
+  useThemeAnimation();
   return (
     <>
-      <StatusBar
-        key={`root-status-bar-${isDarkColorScheme ? 'light' : 'dark'}`}
-        style={isDarkColorScheme ? 'light' : 'light'}
-        animated
-        backgroundColor={isDarkColorScheme ? 'transparent' : '#1B9F67'}
-      />
+      <AppStatusBar />
       {/* WRAP YOUR APP WITH ANY ADDITIONAL PROVIDERS HERE */}
       {/* <ExampleProvider> */}
       <GestureHandlerRootView style={{ flex: 1 }}>

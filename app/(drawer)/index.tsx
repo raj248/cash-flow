@@ -92,16 +92,6 @@ export default function Home() {
         onScroll={handleScroll}
         scrollEventThrottle={16}
         className="flex-1 bg-background p-4">
-        {/* Header with Date Selector */}
-        <View className="mb-4 flex-row items-center justify-between">
-          {/* <Text className="text-2xl font-bold text-foreground">Today's Entry</Text> */}
-          <TouchableOpacity
-            className="rounded bg-primary px-3 py-2"
-            onPress={() => setShowPicker(true)}>
-            <Text className="text-primary-foreground">{selectedDate.toLocaleDateString()}</Text>
-          </TouchableOpacity>
-        </View>
-
         {showPicker && (
           <DateTimePicker
             value={selectedDate}
@@ -114,11 +104,21 @@ export default function Home() {
           />
         )}
 
-        {/* Net Balance Card */}
+        {/* Net Balance Card with Date */}
         <View className="mb-4 rounded-2xl bg-card p-4 shadow">
-          <Text className="text-lg font-semibold text-muted-foreground">Net Balance</Text>
+          <View className="mb-2 flex-row items-center justify-between">
+            <Text className="text-lg font-semibold text-muted-foreground">Net Balance</Text>
+            <TouchableOpacity
+              className="rounded-lg bg-primary px-3 py-1"
+              onPress={() => setShowPicker(true)}>
+              <Text className="text-sm text-primary-foreground">
+                {selectedDate.toLocaleDateString()}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           <Text
-            className={`mt-2 text-3xl font-bold ${
+            className={`mt-1 text-3xl font-bold ${
               netBalance >= 0 ? 'text-green-500' : 'text-red-500'
             }`}>
             ₹{netBalance}
