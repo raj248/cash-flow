@@ -80,7 +80,7 @@ export default function BackupScreen() {
             <Text>Save all your entries and categories as a backup file.</Text>
           </Card.Content>
           <Card.Actions>
-            <Button mode="outlined" onPress={handleExportToDownloads}>
+            <Button mode="contained" onPress={handleExportToDownloads}>
               Export (SD Card)
             </Button>
           </Card.Actions>
@@ -92,7 +92,7 @@ export default function BackupScreen() {
             <Text>Restore your data from a backup JSON file.</Text>
           </Card.Content>
           <Card.Actions>
-            <Button mode="contained-tonal" onPress={handleImport}>
+            <Button mode="contained" onPress={handleImport}>
               Import
             </Button>
           </Card.Actions>

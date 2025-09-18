@@ -25,6 +25,8 @@ import { useEffect } from 'react';
 import AppStatusBar from '~/components/AppStatusBar';
 import useThemeAnimation from '~/hooks/useThemeAnimation';
 
+import { lightTheme, darkTheme } from '~/theme/theme';
+
 SplashScreen.preventAutoHideAsync();
 
 export {
@@ -56,6 +58,7 @@ export default function RootLayout() {
       {/* <ExampleProvider> */}
       <GestureHandlerRootView style={{ flex: 1 }}>
         <PaperProvider
+          theme={isDarkColorScheme ? darkTheme : lightTheme}
           settings={{
             icon: (props) => <Feather {...props} />, // override icon component
           }}>
@@ -65,6 +68,7 @@ export default function RootLayout() {
                 <Stack screenOptions={SCREEN_OPTIONS}>
                   <Stack.Screen name="(drawer)" options={DRAWER_OPTIONS} />
                   <Stack.Screen name="modal" options={MODAL_OPTIONS} />
+                  <Stack.Screen name="new-entry" options={{ title: 'New Entry' }} />
                 </Stack>
               </NavThemeProvider>
             </ActionSheetProvider>

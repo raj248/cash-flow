@@ -62,8 +62,8 @@ export default function BackupScreen() {
   return (
     <>
       <Stack.Screen options={{ title: 'Backup & Restore' }} />
-      <View style={{ flex: 1, justifyContent: 'center', padding: 16 }}>
-        <Card style={{ marginBottom: 20 }}>
+      <View style={{ flex: 1, justifyContent: 'center', padding: 16, gap: 20 }}>
+        <Card>
           <Card.Title title="Export Data" />
           <Card.Content>
             <Text>Save all your entries and categories as a backup file.</Text>
@@ -75,13 +75,13 @@ export default function BackupScreen() {
           </Card.Actions>
         </Card>
 
-        <Card style={{ marginBottom: 20 }}>
+        <Card>
           <Card.Title title="Export to SD Card" />
           <Card.Content>
-            <Text>Save all your entries and categories as a backup file.</Text>
+            <Text>Save all your entries and categories directly to storage.</Text>
           </Card.Content>
           <Card.Actions>
-            <Button mode="outlined" onPress={handleExportToDownloads}>
+            <Button mode="contained" onPress={handleExportToDownloads}>
               Export (SD Card)
             </Button>
           </Card.Actions>
@@ -93,7 +93,7 @@ export default function BackupScreen() {
             <Text>Restore your data from a backup JSON file.</Text>
           </Card.Content>
           <Card.Actions>
-            <Button mode="contained-tonal" onPress={handleImport}>
+            <Button mode="contained" onPress={handleImport}>
               Import
             </Button>
           </Card.Actions>
