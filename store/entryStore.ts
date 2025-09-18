@@ -81,7 +81,7 @@ export const useEntryStore = create<EntryState>()(
 
       getEntriesByDate: (date) => {
         const all = get().entries;
-        return all.filter((e) => e.date === date);
+        return all.filter((e) => e.date === date && !e.deletedAt);
       },
 
       setEntries: (entries) => set({ entries }),

@@ -3,6 +3,8 @@ import { View, Text, Image, Pressable } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Feather } from '@expo/vector-icons';
 import { useCategoryStore } from '~/store/categoryStore';
+import { useColorScheme } from '~/lib/useColorScheme';
+import { darkTheme, lightTheme } from '~/theme/theme';
 
 export default function CategoryDropdownPicker({
   categoryId,
@@ -13,6 +15,8 @@ export default function CategoryDropdownPicker({
 }) {
   const categories = useCategoryStore((s) => s.categories);
   const getCategoryIcon = useCategoryStore((s) => s.getCategoryIcon);
+  const { isDarkColorScheme } = useColorScheme();
+  const theme = isDarkColorScheme ? darkTheme.colors : lightTheme.colors;
 
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState(
@@ -28,7 +32,12 @@ export default function CategoryDropdownPicker({
       return (
         <Image
           source={{ uri: icons.iconImage }}
-          style={{ width: 28, height: 28, borderRadius: 6, marginRight: 8 }}
+          style={{
+            width: 28,
+            height: 28,
+            borderRadius: 6,
+            marginRight: 8,
+          }}
           resizeMode="contain"
         />
       );
@@ -37,7 +46,7 @@ export default function CategoryDropdownPicker({
         <Feather
           name={icons.icon as any}
           size={24}
-          color={icons.color ?? 'black'}
+          color={icons.color ?? theme.onSurface}
           style={{ marginRight: 8 }}
         />
       );
@@ -48,6 +57,7 @@ export default function CategoryDropdownPicker({
   return (
     <View style={{ zIndex: 1000 }}>
       <DropDownPicker
+        theme={isDarkColorScheme ? 'DARK' : 'LIGHT'}
         open={open}
         value={categoryId ?? ''}
         items={items}
@@ -59,25 +69,41 @@ export default function CategoryDropdownPicker({
         setItems={setItems}
         placeholder="Select Category"
         listMode="MODAL"
-        closeAfterSelecting={true} // ✅ closes dropdown on selection
-        closeOnBackPressed={true} // ✅ closes dropdown on back press
-        renderListItem={({ item, onPress }) => (
+        closeAfterSelecting
+        closeOnBackPressed
+        style={{
+          backgroundColor: theme.surface,
+          borderColor: theme.outline,
+        }}
+        dropDownContainerStyle={{
+          backgroundColor: theme.surface,
+          borderColor: theme.outline,
+        }}
+        placeholderStyle={{
+          color: theme.onSurfaceVariant,
+        }}
+        labelStyle={{
+          color: theme.onSurface,
+        }}
+        selectedItemLabelStyle={{
+          fontWeight: '600',
+          color: theme.primary,
+        }}
+        renderListItem={({ item }) => (
           <Pressable
             onPress={() => {
               console.log('Tapped:', item.value);
               setCategoryId(item.value as string);
               setOpen(false);
-              //   onPress(item.value as string);
             }}
             style={{
               flexDirection: 'row',
               alignItems: 'center',
               padding: 10,
             }}
-            android_ripple={{ color: '#ddd' }} // nice ripple effect on Android
-          >
+            android_ripple={{ color: theme.outlineVariant }}>
             {renderCategoryIcon(item.value ?? '')}
-            <Text>{item.label}</Text>
+            <Text style={{ color: theme.onSurface }}>{item.label}</Text>
           </Pressable>
         )}
       />

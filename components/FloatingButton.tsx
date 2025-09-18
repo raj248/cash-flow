@@ -1,6 +1,5 @@
 import { router, useSegments } from 'expo-router';
 import { useState } from 'react';
-import { View } from 'react-native';
 import { FAB } from 'react-native-paper';
 
 export default function FloatingButton({ visible }: { visible: boolean }) {
@@ -9,11 +8,21 @@ export default function FloatingButton({ visible }: { visible: boolean }) {
   const onStateChange = ({ open }: { open: boolean }) => setState({ open });
 
   const { open } = state;
-
+  console.log(segments);
+  const forbiddenScreen = [
+    'new-entry',
+    '(tabs)',
+    'settings',
+    'import-export',
+    'category',
+    'analytics',
+    'debug',
+    'two',
+  ];
   return (
     <FAB.Group
       open={open}
-      visible={visible && (segments.length > 1 ? segments[1] !== '(tabs)' : true)}
+      visible={visible && (forbiddenScreen.includes(segments[segments.length - 1]) ? false : true)}
       icon={open ? 'calendar' : 'plus'}
       actions={[
         { icon: 'plus', onPress: () => console.log('Pressed add') },

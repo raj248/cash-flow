@@ -1,19 +1,16 @@
 // app/add-entry.tsx
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { Button, TextInput, Text } from 'react-native-paper';
-import { Dropdown } from 'react-native-paper-dropdown';
-import { useEntryStore } from '~/store/entryStore';
-import { useCategoryStore } from '~/store/categoryStore';
+import { Button, TextInput, Text, Card } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Feather } from '@expo/vector-icons';
-
-import { Picker, PickerItem } from '~/components/nativewindui/Picker';
-import { useColorScheme } from '~/lib/useColorScheme';
-import { router, Stack } from 'expo-router';
-import CategoryDropdown from '~/components/CategoryDropdown';
-import CategoryDropdownPicker from '~/components/RNDropdown';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
+
+import { useEntryStore } from '~/store/entryStore';
+import { useCategoryStore } from '~/store/categoryStore';
+import CategoryDropdownPicker from '~/components/RNDropdown';
+import { useColorScheme } from '~/lib/useColorScheme';
 
 export default function NewEntryPage() {
   const { colors } = useColorScheme();
@@ -25,13 +22,6 @@ export default function NewEntryPage() {
   const [note, setNote] = useState('');
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-
-  const [showDropDown, setShowDropDown] = useState(false);
-
-  const categoryOptions = categories.map((c) => ({
-    label: c.name,
-    value: c.id,
-  }));
 
   const handleSave = () => {
     if (!amount || !categoryId) {
@@ -50,55 +40,78 @@ export default function NewEntryPage() {
     setNote('');
     setCategoryId(undefined);
     setDate(new Date());
-    // alert('Entry added!');
     router.back();
   };
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['bottom', 'left', 'right']}>
-      <ScrollView className="flex-1 gap-3 p-4">
-        {/* Amount */}
-        <TextInput
-          placeholder="Amount"
-          value={amount}
-          onChangeText={setAmount}
-          keyboardType="numeric"
-          mode="outlined"
-          // className="mb-2 pb-4"
-          style={{ marginBottom: 10 }}
-        />
+      <ScrollView className="flex-1 p-4" contentContainerStyle={{ gap: 16 }}>
+        {/* Amount Section */}
+        <Card mode="outlined">
+          <Card.Content className="gap-2">
+            <Text variant="labelLarge">Amount</Text>
+            <TextInput
+              placeholder="Enter amount"
+              value={amount}
+              onChangeText={setAmount}
+              keyboardType="numeric"
+              mode="outlined"
+            />
+          </Card.Content>
+        </Card>
 
-        <CategoryDropdownPicker categoryId={categoryId} setCategoryId={setCategoryId} />
+        {/* Category Section */}
+        <Card mode="outlined">
+          <Card.Content className="gap-2">
+            <Text variant="labelLarge">Category</Text>
+            <CategoryDropdownPicker categoryId={categoryId} setCategoryId={setCategoryId} />
+          </Card.Content>
+        </Card>
 
-        {/* Date */}
-        <Button mode="outlined" className="my-3" onPress={() => setShowDatePicker(true)}>
-          {date.toDateString()}
-        </Button>
-        {showDatePicker && (
-          <DateTimePicker
-            value={date}
-            mode="date"
-            display="default"
-            placeholderText="Select Date"
-            onChange={(event, selectedDate) => {
-              setShowDatePicker(false);
-              if (selectedDate) setDate(selectedDate);
-            }}
-          />
-        )}
+        {/* Date Section */}
+        <Card mode="outlined">
+          <Card.Content className="gap-2">
+            <Text variant="labelLarge">Date</Text>
+            <Button
+              mode="outlined"
+              icon={() => <Feather name="calendar" size={18} color={colors.primary} />}
+              onPress={() => setShowDatePicker(true)}>
+              {date.toDateString()}
+            </Button>
+            {showDatePicker && (
+              <DateTimePicker
+                value={date}
+                mode="date"
+                display="default"
+                onChange={(event, selectedDate) => {
+                  setShowDatePicker(false);
+                  if (selectedDate) setDate(selectedDate);
+                }}
+              />
+            )}
+          </Card.Content>
+        </Card>
 
-        {/* Note */}
-        <TextInput
-          placeholder="Note (optional)"
-          value={note}
-          onChangeText={setNote}
-          mode="outlined"
-          // className="mb-3"
-          style={{ marginBottom: 10 }}
-        />
+        {/* Note Section */}
+        <Card mode="outlined">
+          <Card.Content className="gap-2">
+            <Text variant="labelLarge">Note (optional)</Text>
+            <TextInput
+              placeholder="Add a note..."
+              value={note}
+              onChangeText={setNote}
+              mode="outlined"
+              multiline
+            />
+          </Card.Content>
+        </Card>
 
-        {/* Save */}
-        <Button mode="contained" onPress={handleSave}>
+        {/* Save Button */}
+        <Button
+          mode="contained"
+          onPress={handleSave}
+          className="mt-4"
+          style={{ borderRadius: 8, paddingVertical: 6 }}>
           Save Entry
         </Button>
       </ScrollView>

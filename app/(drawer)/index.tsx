@@ -22,7 +22,7 @@ import DateTimePicker from '@react-native-community/datetimepicker'; // 👈 ins
 import { cn } from '~/lib/cn';
 
 export default function Home() {
-  const { entries, getEntriesByDate } = useEntryStore();
+  const { getEntriesByDate, removeEntry } = useEntryStore();
   const { categories } = useCategoryStore();
   const [atEnd, setAtEnd] = useState(false);
 
@@ -185,7 +185,37 @@ export default function Home() {
             return (
               <Pressable
                 key={entry.id}
-                className="mb-2 flex-row items-center gap-3 rounded-xl bg-card p-3 shadow">
+                className="mb-2 flex-row items-center gap-3 rounded-xl bg-card p-3 shadow"
+                onPress={() => {
+                  showActionSheetWithOptions(
+                    {
+                      options: ['Edit', 'Delete', 'Cancel'],
+                      cancelButtonIndex: 2,
+                      destructiveButtonIndex: 1,
+                      containerStyle: {
+                        backgroundColor: isDarkColorScheme ? colors.card : colors.background,
+                      },
+                      textStyle: {
+                        color: colors.foreground,
+                      },
+                    },
+                    (selectedIndex) => {
+                      switch (selectedIndex) {
+                        case 0:
+                          // Edit
+                          console.log('Edit entry:', entry.id);
+                          break;
+                        case 1:
+                          // Delete
+                          removeEntry(entry.id);
+                          console.log('Delete entry:', entry.id);
+                          break;
+                        case 2:
+                        // Cancel
+                      }
+                    }
+                  );
+                }}>
                 {category?.id && (
                   <CategoryIcon
                     categoryId={category.id}
