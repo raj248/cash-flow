@@ -42,16 +42,30 @@ export default function AddCategoryPage() {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!name.trim()) return;
+
+    let base64Image: string | undefined;
+
+    if (iconImage) {
+      try {
+        base64Image = await FileSystem.readAsStringAsync(iconImage, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+      } catch (err) {
+        console.error('Error reading base64:', err);
+      }
+    }
 
     addCategory({
       name,
       type: income ? 'income' : 'expense',
       icon,
-      iconImage,
+      iconImage: base64Image ? `data:image/png;base64,${base64Image}` : iconImage,
+      // 👆 stores as base64 if available, fallback to file path
     });
 
+    // Reset form
     setName('');
     setIcon(undefined);
     setIconImage(undefined);

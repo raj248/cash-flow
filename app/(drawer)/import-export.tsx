@@ -98,6 +98,30 @@ export default function BackupScreen() {
             </Button>
           </Card.Actions>
         </Card>
+
+        <Card>
+          <Card.Title title="Backup to Google Drive" />
+          <Card.Content>
+            <Text>Coming soon: save your backup to Google Drive.</Text>
+          </Card.Content>
+          <Card.Actions>
+            <Button mode="contained" disabled>
+              Backup (Google Drive)
+            </Button>
+          </Card.Actions>
+        </Card>
+
+        <Card>
+          <Card.Title title="Backup to GitHub" />
+          <Card.Content>
+            <Text>Coming soon: push your backup to a GitHub repository.</Text>
+          </Card.Content>
+          <Card.Actions>
+            <Button mode="contained" disabled>
+              Backup (GitHub)
+            </Button>
+          </Card.Actions>
+        </Card>
       </View>
     </>
   );
