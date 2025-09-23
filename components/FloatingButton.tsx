@@ -25,26 +25,20 @@ export default function FloatingButton({ visible }: { visible: boolean }) {
       visible={visible && (forbiddenScreen.includes(segments[segments.length - 1]) ? false : true)}
       icon={open ? 'calendar' : 'plus'}
       actions={[
-        { icon: 'plus', onPress: () => console.log('Pressed add') },
-        {
-          icon: 'star',
-          label: 'Star',
-          onPress: () => console.log('Pressed star'),
-        },
-        {
-          icon: 'mail',
-          label: 'Email',
-          onPress: () => router.push('/(drawer)/analytics'),
-        },
-        {
-          icon: 'bell',
-          label: 'Remind',
-          onPress: () => router.push('/expense-breakdown'),
-        },
         {
           icon: 'plus-circle',
           label: 'New Entry',
           onPress: () => router.push('/new-entry'),
+        },
+        {
+          icon: 'grid',
+          label: 'New Category',
+          onPress: () => router.push('/(drawer)/category'),
+        },
+        {
+          icon: 'activity',
+          label: 'Analytics',
+          onPress: () => router.push('/analytics'),
         },
       ]}
       onStateChange={onStateChange}
