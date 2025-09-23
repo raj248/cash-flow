@@ -92,7 +92,6 @@ export function AnalyticsChart({ initialFrom, initialTo }: Props) {
           xAxisColor="transparent"
           xAxisLabelTextStyle={{ color: '#6b7280', fontSize: 11 }}
           yAxisTextStyle={{ color: '#6b7280', fontSize: 11 }}
-          spacing={40}
           initialSpacing={10}
           rulesType="dotted"
           rulesColor="#e5e7eb" // subtle grid
@@ -108,6 +107,8 @@ export function AnalyticsChart({ initialFrom, initialTo }: Props) {
           showDataPointOnFocus
           showStripOnFocus
           stripColor="#9ca3af55"
+          // spacing={40}
+          spacing={Math.max(40, 300 / chartData.expense.length)}
           renderTooltip={(item: lineDataItem) => (
             <View
               style={{

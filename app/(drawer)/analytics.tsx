@@ -1,6 +1,7 @@
 // Analytics.tsx
 import { useState } from 'react';
-import { SafeAreaView, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { AnalyticsCategory } from '~/components/AnalyticsCategory';
 import { AnalyticsChart } from '~/components/AnalyticsChart';
 import { DateRangePicker } from '~/components/DateRangePicker';
@@ -10,7 +11,7 @@ export default function Analytics() {
   const [toDate, setToDate] = useState<Date>(new Date());
 
   return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-black">
+    <SafeAreaView className="flex-1 bg-white dark:bg-black" edges={['bottom', 'left', 'right']}>
       <ScrollView contentContainerClassName="p-4">
         <DateRangePicker
           fromDate={fromDate}
