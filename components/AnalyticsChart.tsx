@@ -1,44 +1,36 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { CurveType, LineChart } from 'react-native-gifted-charts';
+import { CurveType, LineChart, LineChartPropsType, lineDataItem } from 'react-native-gifted-charts';
 import { useEntryStore } from '~/store/entryStore';
 import { useCategoryStore } from '~/store/categoryStore';
 
 type Props = {
-  initialFrom?: Date;
-  initialTo?: Date;
+  initialFrom: Date;
+  initialTo: Date;
 };
 
 export function AnalyticsChart({ initialFrom, initialTo }: Props) {
   const { entries } = useEntryStore();
   const { categories } = useCategoryStore();
 
-  const [fromDate, setFromDate] = useState<Date>(
-    initialFrom ?? new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-  );
-  const [toDate, setToDate] = useState<Date>(initialTo ?? new Date());
-
-  const [showFromPicker, setShowFromPicker] = useState(false);
-  const [showToPicker, setShowToPicker] = useState(false);
-
   const chartData = useMemo(() => {
     const filtered = entries.filter((e) => {
       return (
-        e.date >= fromDate.toISOString().split('T')[0] &&
-        e.date <= toDate.toISOString().split('T')[0]
+        e.date >= initialFrom.toISOString().split('T')[0] &&
+        e.date <= initialTo.toISOString().split('T')[0]
       );
     });
 
     // days in range
     const days: string[] = [];
-    const cursor = new Date(fromDate);
-    while (cursor <= toDate) {
+    const cursor = new Date(initialFrom);
+    while (cursor <= initialTo) {
       days.push(cursor.toISOString().split('T')[0]);
       cursor.setDate(cursor.getDate() + 1);
     }
 
-    const income = days.map((day) => {
+    const income: lineDataItem[] = days.map((day) => {
       const total = filtered
         .filter((e) => {
           const cat = categories.find((c) => c.id === e.categoryId);
@@ -52,10 +44,40 @@ export function AnalyticsChart({ initialFrom, initialTo }: Props) {
         dataPointColor: '#16a34a',
         dataPointRadius: 3,
         showDataPoint: true,
+        // focusedDataPointLabelComponent: (props: { value: any }) => {
+        //   return (
+        //     <View
+        //       style={{
+        //         backgroundColor: 'red',
+        //         padding: 4,
+        //         borderRadius: 4,
+        //         elevation: 2,
+        //       }}>
+        //       <Text style={{ fontSize: 10, color: 'black' }}>
+        //         {props.value ? `₹${props.value}` : ''}
+        //       </Text>
+        //     </View>
+        //   );
+        // },
+        // dataPointLabelComponent: (props: { value: any }) => {
+        //   return (
+        //     <View
+        //       style={{
+        //         backgroundColor: 'white',
+        //         padding: 4,
+        //         borderRadius: 4,
+        //         elevation: 2,
+        //       }}>
+        //       <Text style={{ fontSize: 10, color: 'black' }}>
+        //         {props.value ? `₹${props.value}` : ''}
+        //       </Text>
+        //     </View>
+        //   );
+        // },
       };
     });
 
-    const expense = days.map((day) => {
+    const expense: lineDataItem[] = days.map((day) => {
       const total = filtered
         .filter((e) => {
           const cat = categories.find((c) => c.id === e.categoryId);
@@ -73,7 +95,7 @@ export function AnalyticsChart({ initialFrom, initialTo }: Props) {
     });
 
     return { income, expense };
-  }, [entries, categories, fromDate, toDate]);
+  }, [entries, categories, initialFrom, initialTo]);
 
   const totalIncome = chartData.income.reduce((acc, d) => acc + (d.value ?? 0), 0);
   const totalExpense = chartData.expense.reduce((acc, d) => acc + (d.value ?? 0), 0);
@@ -83,47 +105,6 @@ export function AnalyticsChart({ initialFrom, initialTo }: Props) {
       {/* Title */}
       <View className="mb-4 flex-row items-center justify-between">
         <Text className="text-xl font-bold text-black dark:text-white">Income vs Expense</Text>
-      </View>
-
-      {/* Date pickers */}
-      <View className="mb-4 flex-row justify-between">
-        {/* From */}
-        <TouchableOpacity
-          className="rounded-lg bg-primary px-3 py-1"
-          onPress={() => setShowFromPicker(true)}>
-          <Text className="text-sm text-primary-foreground">
-            From: {fromDate.toLocaleDateString()}
-          </Text>
-        </TouchableOpacity>
-        {showFromPicker && (
-          <DateTimePicker
-            value={fromDate}
-            mode="date"
-            display="default"
-            onChange={(event, date) => {
-              setShowFromPicker(false);
-              if (date) setFromDate(date);
-            }}
-          />
-        )}
-
-        {/* To */}
-        <TouchableOpacity
-          className="rounded-lg bg-primary px-3 py-1"
-          onPress={() => setShowToPicker(true)}>
-          <Text className="text-sm text-primary-foreground">To: {toDate.toLocaleDateString()}</Text>
-        </TouchableOpacity>
-        {showToPicker && (
-          <DateTimePicker
-            value={toDate}
-            mode="date"
-            display="default"
-            onChange={(event, date) => {
-              setShowToPicker(false);
-              if (date) setToDate(date);
-            }}
-          />
-        )}
       </View>
 
       {/* Chart */}
@@ -157,10 +138,32 @@ export function AnalyticsChart({ initialFrom, initialTo }: Props) {
           stripColor="#9ca3af55"
           maxValue={
             Math.max(
-              ...chartData.expense.map((d) => d.value),
-              ...chartData.income.map((d) => d.value)
+              ...chartData.expense.map((d) => d.value ?? 0),
+              ...chartData.income.map((d) => d.value ?? 0)
             ) + 100
           }
+          unFocusOnPressOut
+          showDataPointLabelOnFocus
+          showDataPointOnFocus
+          showValuesAsDataPointsText
+          showDataPointsForMissingValues
+          interpolateMissingValues
+          mostNegativeValue={-100}
+          renderTooltip={(item: lineDataItem, index: number) => {
+            return (
+              <View
+                style={{
+                  backgroundColor: 'white',
+                  padding: 4,
+                  borderRadius: 4,
+                  elevation: 2,
+                }}>
+                <Text style={{ fontSize: 10, color: 'black' }}>
+                  {item.value ? `₹${item.value}` : ''}
+                </Text>
+              </View>
+            );
+          }}
         />
       </View>
 
