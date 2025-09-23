@@ -1,7 +1,6 @@
-import React, { useState, useMemo } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { CurveType, LineChart, LineChartPropsType, lineDataItem } from 'react-native-gifted-charts';
+import React, { useMemo } from 'react';
+import { View, Text } from 'react-native';
+import { CurveType, LineChart, lineDataItem } from 'react-native-gifted-charts';
 import { useEntryStore } from '~/store/entryStore';
 import { useCategoryStore } from '~/store/categoryStore';
 
@@ -15,14 +14,13 @@ export function AnalyticsChart({ initialFrom, initialTo }: Props) {
   const { categories } = useCategoryStore();
 
   const chartData = useMemo(() => {
-    const filtered = entries.filter((e) => {
-      return (
+    const filtered = entries.filter(
+      (e) =>
         e.date >= initialFrom.toISOString().split('T')[0] &&
         e.date <= initialTo.toISOString().split('T')[0]
-      );
-    });
+    );
 
-    // days in range
+    // Build full day range
     const days: string[] = [];
     const cursor = new Date(initialFrom);
     while (cursor <= initialTo) {
@@ -42,38 +40,7 @@ export function AnalyticsChart({ initialFrom, initialTo }: Props) {
         value: total,
         label: new Date(day).getDate().toString(),
         dataPointColor: '#16a34a',
-        dataPointRadius: 3,
-        showDataPoint: true,
-        // focusedDataPointLabelComponent: (props: { value: any }) => {
-        //   return (
-        //     <View
-        //       style={{
-        //         backgroundColor: 'red',
-        //         padding: 4,
-        //         borderRadius: 4,
-        //         elevation: 2,
-        //       }}>
-        //       <Text style={{ fontSize: 10, color: 'black' }}>
-        //         {props.value ? `₹${props.value}` : ''}
-        //       </Text>
-        //     </View>
-        //   );
-        // },
-        // dataPointLabelComponent: (props: { value: any }) => {
-        //   return (
-        //     <View
-        //       style={{
-        //         backgroundColor: 'white',
-        //         padding: 4,
-        //         borderRadius: 4,
-        //         elevation: 2,
-        //       }}>
-        //       <Text style={{ fontSize: 10, color: 'black' }}>
-        //         {props.value ? `₹${props.value}` : ''}
-        //       </Text>
-        //     </View>
-        //   );
-        // },
+        dataPointRadius: total > 0 ? 4 : 0,
       };
     });
 
@@ -89,8 +56,7 @@ export function AnalyticsChart({ initialFrom, initialTo }: Props) {
         value: total,
         label: new Date(day).getDate().toString(),
         dataPointColor: '#dc2626',
-        dataPointRadius: 3,
-        showDataPoint: true,
+        dataPointRadius: total > 0 ? 4 : 0,
       };
     });
 
@@ -103,76 +69,79 @@ export function AnalyticsChart({ initialFrom, initialTo }: Props) {
   return (
     <View>
       {/* Title */}
-      <View className="mb-4 flex-row items-center justify-between">
-        <Text className="text-xl font-bold text-black dark:text-white">Income vs Expense</Text>
+      <View className="mb-4">
+        <Text className="text-xl font-semibold text-black dark:text-white">Income vs Expense</Text>
+        <Text className="text-xs text-gray-500 dark:text-gray-400">
+          Overview of your selected date range
+        </Text>
       </View>
 
       {/* Chart */}
-      <View className="mb-6 flex-1 items-center">
+      <View className="mb-6 items-center">
         <LineChart
+          key={`${initialFrom.toISOString()}-${initialTo.toISOString()}`} // 👈 force re-render
           data={chartData.expense}
           data2={chartData.income}
-          height={250}
+          height={220}
           curved
           curveType={CurveType.CUBIC}
-          thickness={2}
-          color1="#dc2626"
-          color2="#16a34a"
-          yAxisColor="#d1d5db"
-          xAxisColor="#d1d5db"
-          xAxisLabelTextStyle={{ color: '#6b7280', fontSize: 12 }}
-          yAxisTextStyle={{ color: '#6b7280', fontSize: 12 }}
-          dataPointsColor1="#dc2626"
-          dataPointsColor2="#16a34a"
-          dataPointsRadius={2}
-          spacing={80}
+          thickness={2.5}
+          color1="#ef4444" // softer red
+          color2="#22c55e" // softer green
+          yAxisColor="transparent"
+          xAxisColor="transparent"
+          xAxisLabelTextStyle={{ color: '#6b7280', fontSize: 11 }}
+          yAxisTextStyle={{ color: '#6b7280', fontSize: 11 }}
+          spacing={40}
           initialSpacing={10}
-          rulesType="solid"
-          //   isAnimated
-          renderDataPointsAfterAnimationEnds
-          animateOnDataChange
-          animationDuration={800}
-          focusEnabled
+          rulesType="dotted"
+          rulesColor="#e5e7eb" // subtle grid
+          areaChart
+          startFillColor1="#ef444420"
+          startFillColor2="#22c55e20"
+          endFillColor1="#ef444400"
+          endFillColor2="#22c55e00"
+          startOpacity={0.3}
+          endOpacity={0.05}
+          isAnimated
+          animationDuration={600}
+          showDataPointOnFocus
           showStripOnFocus
-          showTextOnFocus
           stripColor="#9ca3af55"
+          renderTooltip={(item: lineDataItem) => (
+            <View
+              style={{
+                backgroundColor: '#fff',
+                paddingHorizontal: 8,
+                paddingVertical: 4,
+                borderRadius: 6,
+                shadowColor: '#000',
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 2,
+              }}>
+              <Text style={{ fontSize: 12, fontWeight: '600', color: '#111' }}>₹{item.value}</Text>
+            </View>
+          )}
           maxValue={
             Math.max(
               ...chartData.expense.map((d) => d.value ?? 0),
               ...chartData.income.map((d) => d.value ?? 0)
             ) + 100
           }
-          unFocusOnPressOut
-          showDataPointLabelOnFocus
-          showDataPointOnFocus
-          showValuesAsDataPointsText
-          showDataPointsForMissingValues
-          interpolateMissingValues
-          mostNegativeValue={-100}
-          renderTooltip={(item: lineDataItem, index: number) => {
-            return (
-              <View
-                style={{
-                  backgroundColor: 'white',
-                  padding: 4,
-                  borderRadius: 4,
-                  elevation: 2,
-                }}>
-                <Text style={{ fontSize: 10, color: 'black' }}>
-                  {item.value ? `₹${item.value}` : ''}
-                </Text>
-              </View>
-            );
-          }}
         />
       </View>
 
       {/* Totals */}
-      <View className="mt-2 space-y-2">
-        <Text className="text-sm text-black dark:text-white">Total Income: ₹{totalIncome}</Text>
-        <Text className="text-sm text-black dark:text-white">Total Expense: ₹{totalExpense}</Text>
+      <View className="mt-2 rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
+        <Text className="text-sm text-gray-600 dark:text-gray-300">
+          Total Income: <Text className="font-semibold text-green-600">₹{totalIncome}</Text>
+        </Text>
+        <Text className="text-sm text-gray-600 dark:text-gray-300">
+          Total Expense: <Text className="font-semibold text-red-600">₹{totalExpense}</Text>
+        </Text>
         <Text
-          className={`text-sm font-semibold ${
+          className={`mt-1 text-base font-bold ${
             totalIncome - totalExpense >= 0 ? 'text-green-600' : 'text-red-600'
           }`}>
           Net Balance: ₹{totalIncome - totalExpense}

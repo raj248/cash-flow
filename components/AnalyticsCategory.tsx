@@ -6,26 +6,18 @@ import { useEntryStore } from '~/store/entryStore';
 import { useCategoryStore } from '~/store/categoryStore';
 
 type Props = {
-  initialFrom?: Date;
-  initialTo?: Date;
+  initialFrom: Date;
+  initialTo: Date;
 };
 
 export function AnalyticsCategory({ initialFrom, initialTo }: Props) {
   const { entries } = useEntryStore();
   const { categories } = useCategoryStore();
 
-  const [fromDate, setFromDate] = useState<Date>(
-    initialFrom ?? new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-  );
-  const [toDate, setToDate] = useState<Date>(initialTo ?? new Date());
-
-  const [showFromPicker, setShowFromPicker] = useState(false);
-  const [showToPicker, setShowToPicker] = useState(false);
-
   const categoryData = useMemo(() => {
     const filteredEntries = entries.filter((e) => {
       const entryDate = new Date(e.date);
-      return entryDate >= fromDate && entryDate <= toDate;
+      return entryDate >= initialFrom && entryDate <= initialTo;
     });
 
     const data: {
@@ -48,52 +40,11 @@ export function AnalyticsCategory({ initialFrom, initialTo }: Props) {
     });
 
     return Object.values(data).filter((d) => d.income > 0 || d.expense > 0);
-  }, [entries, categories, fromDate, toDate]);
+  }, [entries, categories, initialFrom, initialTo]);
 
   return (
     <View className="mt-8">
       <Text className="mb-4 text-xl font-bold text-black dark:text-white">Category Breakdown</Text>
-
-      {/* Date pickers */}
-      <View className="mb-4 flex-row justify-between">
-        {/* From */}
-        <TouchableOpacity
-          className="rounded-lg bg-primary px-3 py-1"
-          onPress={() => setShowFromPicker(true)}>
-          <Text className="text-sm text-primary-foreground">
-            From: {fromDate.toLocaleDateString()}
-          </Text>
-        </TouchableOpacity>
-        {showFromPicker && (
-          <DateTimePicker
-            value={fromDate}
-            mode="date"
-            display="default"
-            onChange={(event, date) => {
-              setShowFromPicker(false);
-              if (date) setFromDate(date);
-            }}
-          />
-        )}
-
-        {/* To */}
-        <TouchableOpacity
-          className="rounded-lg bg-primary px-3 py-1"
-          onPress={() => setShowToPicker(true)}>
-          <Text className="text-sm text-primary-foreground">To: {toDate.toLocaleDateString()}</Text>
-        </TouchableOpacity>
-        {showToPicker && (
-          <DateTimePicker
-            value={toDate}
-            mode="date"
-            display="default"
-            onChange={(event, date) => {
-              setShowToPicker(false);
-              if (date) setToDate(date);
-            }}
-          />
-        )}
-      </View>
 
       {/* Category List */}
       <View className="mt-4">

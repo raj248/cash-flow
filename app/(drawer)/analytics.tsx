@@ -19,7 +19,7 @@ export default function Analytics() {
           onToDateChange={setToDate}
         />
         <AnalyticsChart initialFrom={fromDate} initialTo={toDate} />
-        <AnalyticsCategory />
+        <AnalyticsCategory initialFrom={fromDate} initialTo={toDate} />
       </ScrollView>
     </SafeAreaView>
   );
