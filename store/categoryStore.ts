@@ -10,6 +10,7 @@ export type Category = {
   id: string; // unique identifier
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string; // <-- added for soft delete
 
   userId?: string; // optional, useful when syncing
   name: string;
@@ -22,7 +23,7 @@ export type Category = {
 type CategoryState = {
   categories: Category[];
   addCategory: (category: Omit<Category, 'id' | 'createdAt' | 'updatedAt'>) => void;
-  removeCategory: (id: string) => void;
+  removeCategory: (id: string, soft?: boolean) => void; // <-- soft flag
   getCategoryIcon: (id: string) => { icon?: string; iconImage?: string; color?: string } | null;
   setCategories: (cats: Category[]) => void;
   populateDummyData: () => void;
@@ -44,10 +45,12 @@ export const useCategoryStore = create<CategoryState>()(
           return { categories: [...state.categories, newCategory] };
         }),
 
-      removeCategory: (id) => {
+      removeCategory: (id, soft = true) => {
         const categoryToRemove = get().categories.find((c) => c.id === id);
 
-        if (categoryToRemove?.iconImage) {
+        if (!categoryToRemove) return;
+
+        if (!soft && categoryToRemove.iconImage) {
           FileSystem.deleteAsync(categoryToRemove.iconImage, { idempotent: true }).catch((err) =>
             console.warn('Failed to delete icon image:', err)
           );
@@ -55,7 +58,15 @@ export const useCategoryStore = create<CategoryState>()(
         }
 
         set((state) => ({
-          categories: state.categories.filter((c) => c.id !== id),
+          categories: state.categories
+            .map((c) =>
+              c.id === id
+                ? soft
+                  ? { ...c, deletedAt: new Date().toISOString() }
+                  : c // hard delete handled by filtering below
+                : c
+            )
+            .filter((c) => !c.deletedAt || !soft), // remove if hard delete
         }));
       },
 
