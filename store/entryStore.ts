@@ -7,7 +7,7 @@ import { useCategoryStore } from './categoryStore';
 export type Entry = {
   id: string;
   userId?: string;
-  categoryId: string;
+  categoryId: string | null;
   amount: number;
   date: string; // ISO format (YYYY-MM-DD)
   note?: string;
@@ -22,6 +22,8 @@ type EntryState = {
   removeEntry: (id: string, soft?: boolean) => void;
   updateEntry: (id: string, updates: Partial<Omit<Entry, 'id' | 'createdAt'>>) => void;
   restoreEntry: (id: string) => void; // undo soft delete
+  removeEntriesByCategory: (categoryId: string, removeAll?: boolean) => void;
+  purgeTrash: () => void;
   getTodayEntries: () => Entry[]; // ✅ new
   getEntriesByDate: (date: string) => Entry[];
 
@@ -59,6 +61,22 @@ export const useEntryStore = create<EntryState>()(
             };
           }
         }),
+
+      // inside useEntryStore
+      removeEntriesByCategory: (categoryId: string, removeAll = true) =>
+        set((state) => ({
+          entries: state.entries.map((e) => {
+            if (e.categoryId !== categoryId) return e;
+            return removeAll
+              ? { ...e, deletedAt: new Date().toISOString() }
+              : { ...e, categoryId: null }; // keep entry but unset category
+          }),
+        })),
+
+      purgeTrash: () =>
+        set((state) => ({
+          entries: state.entries.filter((e) => !e.deletedAt),
+        })),
 
       updateEntry: (id, updates) =>
         set((state) => ({

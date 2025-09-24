@@ -59,6 +59,14 @@ const DrawerLayout = () => (
         ),
       }}
     />
+    <Drawer.Screen
+      name="trash"
+      options={{
+        headerTitle: 'Trash',
+        drawerLabel: 'Trash',
+        drawerIcon: ({ size, color }) => <Feather name="trash" size={size} color={color} />,
+      }}
+    />
   </Drawer>
 );
 

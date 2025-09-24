@@ -36,19 +36,22 @@ export default function Home() {
   const formattedDate = selectedDate.toISOString().split('T')[0];
   const dayEntries = getEntriesByDate(formattedDate);
 
+  // filter undeleted categories
+  const activeCategories = categories.filter((c) => !c.deletedAt);
+
   // Totals
   const incomeTotal = dayEntries
-    .filter((e) => categories.find((c) => c.id === e.categoryId)?.type === 'income')
+    .filter((e) => activeCategories.find((c) => c.id === e.categoryId)?.type === 'income')
     .reduce((sum, e) => sum + e.amount, 0);
 
   const expenseTotal = dayEntries
-    .filter((e) => categories.find((c) => c.id === e.categoryId)?.type === 'expense')
+    .filter((e) => activeCategories.find((c) => c.id === e.categoryId)?.type === 'expense')
     .reduce((sum, e) => sum + e.amount, 0);
 
   const netBalance = incomeTotal - expenseTotal;
 
   // Category grouping
-  const groupedByCategory = categories.map((cat) => {
+  const groupedByCategory = activeCategories.map((cat) => {
     const catEntries = dayEntries.filter((e) => e.categoryId === cat.id);
     const total = catEntries.reduce((sum, e) => sum + e.amount, 0);
     return { ...cat, total };
@@ -216,15 +219,16 @@ export default function Home() {
                     }
                   );
                 }}>
-                {category?.id && (
-                  <CategoryIcon
-                    categoryId={category.id}
-                    size={30}
-                    color={category?.color || 'black'}
-                  />
-                )}
+                <CategoryIcon
+                  categoryId={category?.id ?? 'N/A'}
+                  size={30}
+                  color={category?.color || 'black'}
+                />
+
                 <View className="flex-1">
-                  <Text className="font-semibold text-foreground">{category?.name || 'N/A'}</Text>
+                  <Text className="font-semibold text-foreground">
+                    {category?.name + (category?.deletedAt ? ' (Deleted)' : '') || 'Category N/A'}
+                  </Text>
                   <Text className="text-sm text-muted-foreground">{entry.note}</Text>
                   <Text className="text-xs text-muted-foreground">
                     {new Date(entry.date).toLocaleDateString()}

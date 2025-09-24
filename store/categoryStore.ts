@@ -23,7 +23,9 @@ export type Category = {
 type CategoryState = {
   categories: Category[];
   addCategory: (category: Omit<Category, 'id' | 'createdAt' | 'updatedAt'>) => void;
-  removeCategory: (id: string, soft?: boolean) => void; // <-- soft flag
+  removeCategory: (id: string, soft?: boolean, handleEntries?: (id: string) => void) => void; // <-- soft flag
+  purgeTrash: () => void;
+  restoreCategory: (id: string) => void;
   getCategoryIcon: (id: string) => { icon?: string; iconImage?: string; color?: string } | null;
   setCategories: (cats: Category[]) => void;
   populateDummyData: () => void;
@@ -45,30 +47,38 @@ export const useCategoryStore = create<CategoryState>()(
           return { categories: [...state.categories, newCategory] };
         }),
 
-      removeCategory: (id, soft = true) => {
+      removeCategory: (id, soft = true, handleEntries?: (id: string) => void) => {
         const categoryToRemove = get().categories.find((c) => c.id === id);
-
         if (!categoryToRemove) return;
 
-        if (!soft && categoryToRemove.iconImage) {
-          FileSystem.deleteAsync(categoryToRemove.iconImage, { idempotent: true }).catch((err) =>
-            console.warn('Failed to delete icon image:', err)
-          );
-          console.log('Deleted icon image:', categoryToRemove.iconImage);
+        // soft delete
+        if (soft) {
+          set((state) => ({
+            categories: state.categories.map((c) =>
+              c.id === id ? { ...c, deletedAt: new Date().toISOString() } : c
+            ),
+          }));
+        } else {
+          set((state) => ({
+            categories: state.categories.filter((c) => c.id !== id),
+          }));
         }
-
-        set((state) => ({
-          categories: state.categories
-            .map((c) =>
-              c.id === id
-                ? soft
-                  ? { ...c, deletedAt: new Date().toISOString() }
-                  : c // hard delete handled by filtering below
-                : c
-            )
-            .filter((c) => !c.deletedAt || !soft), // remove if hard delete
-        }));
+        if (handleEntries) {
+          handleEntries(id); // ask entryStore what to do
+        }
       },
+
+      purgeTrash: () =>
+        set((state) => ({
+          categories: state.categories.filter((cat) => !cat.deletedAt),
+        })),
+
+      restoreCategory: (id) =>
+        set((state) => ({
+          categories: state.categories.map((c) =>
+            c.id === id ? { ...c, deletedAt: undefined } : c
+          ),
+        })),
 
       getCategoryIcon: (id) => {
         const category = get().categories.find((c) => c.id === id);

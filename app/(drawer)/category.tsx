@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
@@ -6,6 +6,7 @@ import Feather from '@expo/vector-icons/Feather';
 import { useCategoryStore } from '~/store/categoryStore';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useEntryStore } from '~/store/entryStore';
 
 export default function AddCategoryPage() {
   const { addCategory, removeCategory, categories } = useCategoryStore();
@@ -70,6 +71,15 @@ export default function AddCategoryPage() {
     setIcon(undefined);
     setIconImage(undefined);
   };
+
+  // filter un-deleted categories
+  const activeCategories = categories.filter((c) => !c.deletedAt);
+  // useEffect(() => {
+  //   if (activeCategories.length === 0) {
+  //     useCategoryStore.getState().populateDummyData();
+  //     useEntryStore.getState().populateDummyData();
+  //   }
+  // }, [activeCategories.length]);
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['bottom', 'left', 'right']}>
@@ -161,10 +171,10 @@ export default function AddCategoryPage() {
         {/* Categories List */}
         <View>
           <Text className="mb-3 text-lg font-semibold text-foreground">Your Categories</Text>
-          {categories.length === 0 && (
+          {activeCategories.length === 0 && (
             <Text className="text-muted-foreground">No categories added yet.</Text>
           )}
-          {categories.map((c) => (
+          {activeCategories.map((c) => (
             <View key={c.id} className="mb-3 flex-row items-center rounded-xl bg-card p-3 shadow">
               {c.iconImage ? (
                 <Image source={{ uri: c.iconImage }} className="mr-3 h-10 w-10 rounded-full" />
@@ -185,7 +195,13 @@ export default function AddCategoryPage() {
               </View>
 
               <TouchableOpacity
-                onPress={() => removeCategory(c.id)}
+                onPress={() =>
+                  removeCategory(
+                    c.id,
+                    true
+                    // (catId) => useEntryStore.getState().removeEntriesByCategory(catId, false)
+                  )
+                }
                 className="bg-destructive/20 rounded-lg px-3 py-1">
                 <Text className="text-destructive">Delete</Text>
               </TouchableOpacity>
