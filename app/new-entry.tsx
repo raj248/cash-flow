@@ -24,18 +24,27 @@ export default function NewEntryPage() {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleSave = () => {
-    if (!amount || !categoryId) {
-      alert('Please enter amount and select a category');
+    // validate amount
+    const parsedAmount = parseFloat(amount);
+
+    if (!amount || isNaN(parsedAmount) || parsedAmount <= 0) {
+      alert('Please enter a valid amount greater than 0');
+      return;
+    }
+
+    if (!categoryId) {
+      alert('Please select a category');
       return;
     }
 
     addEntry({
-      amount: parseFloat(amount),
+      amount: parsedAmount,
       categoryId,
       date: date.toISOString().split('T')[0],
       note,
     });
 
+    // reset form
     setAmount('');
     setNote('');
     setCategoryId(undefined);
