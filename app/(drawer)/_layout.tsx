@@ -47,8 +47,19 @@ const DrawerLayout = () => (
       }}
     />
     <Drawer.Screen
+      name="trash"
+      options={{
+        headerTitle: 'Trash',
+        drawerLabel: 'Trash',
+        drawerIcon: ({ size, color }) => <Feather name="trash" size={size} color={color} />,
+      }}
+    />
+    <Drawer.Screen
       name="(tabs)"
       options={{
+        drawerItemStyle: {
+          display: 'none',
+        },
         headerTitle: 'Tabs',
         drawerLabel: 'Tabs',
         drawerIcon: ({ size, color }) => <Feather name="airplay" size={size} color={color} />,
@@ -57,14 +68,6 @@ const DrawerLayout = () => (
             <HeaderButton />
           </Link>
         ),
-      }}
-    />
-    <Drawer.Screen
-      name="trash"
-      options={{
-        headerTitle: 'Trash',
-        drawerLabel: 'Trash',
-        drawerIcon: ({ size, color }) => <Feather name="trash" size={size} color={color} />,
       }}
     />
   </Drawer>

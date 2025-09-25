@@ -8,7 +8,7 @@ export default function FloatingButton({ visible }: { visible: boolean }) {
   const onStateChange = ({ open }: { open: boolean }) => setState({ open });
 
   const { open } = state;
-  console.log(segments);
+  // console.log(segments);
   const forbiddenScreen = [
     'new-entry',
     '(tabs)',

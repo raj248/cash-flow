@@ -7,6 +7,7 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   Pressable,
+  Alert,
 } from 'react-native';
 import React, { useState } from 'react';
 import { Portal } from 'react-native-paper';
@@ -206,12 +207,15 @@ export default function Home() {
                       switch (selectedIndex) {
                         case 0:
                           // Edit
-                          console.log('Edit entry:', entry.id);
+                          Alert.alert(
+                            'Not Implemented Yet',
+                            'This feature is not implemented yet.',
+                            [{ text: 'OK', onPress: () => console.log('OK Pressed') }]
+                          );
                           break;
                         case 1:
                           // Delete
                           removeEntry(entry.id);
-                          console.log('Delete entry:', entry.id);
                           break;
                         case 2:
                         // Cancel
@@ -227,7 +231,8 @@ export default function Home() {
 
                 <View className="flex-1">
                   <Text className="font-semibold text-foreground">
-                    {category?.name + (category?.deletedAt ? ' (Deleted)' : '') || 'Category N/A'}
+                    {(category?.name || 'Category N/A') +
+                      (category?.deletedAt ? ' (Deleted)' : '') || 'Category N/A'}
                   </Text>
                   <Text className="text-sm text-muted-foreground">{entry.note}</Text>
                   <Text className="text-xs text-muted-foreground">

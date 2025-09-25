@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import Feather from '@expo/vector-icons/Feather';
@@ -195,13 +195,23 @@ export default function AddCategoryPage() {
               </View>
 
               <TouchableOpacity
-                onPress={() =>
-                  removeCategory(
-                    c.id,
-                    true
-                    // (catId) => useEntryStore.getState().removeEntriesByCategory(catId, false)
-                  )
-                }
+                onPress={() => {
+                  Alert.alert(
+                    'Move to Trash?',
+                    'This will move the category into trash. Are you sure?',
+                    [
+                      {
+                        text: 'OK',
+                        onPress: () => removeCategory(c.id, true),
+                      },
+
+                      {
+                        text: 'Cancel',
+                        style: 'cancel',
+                      },
+                    ]
+                  );
+                }}
                 className="bg-destructive/20 rounded-lg px-3 py-1">
                 <Text className="text-destructive">Delete</Text>
               </TouchableOpacity>

@@ -1,0 +1,123 @@
+## TODO
+
+- Edit Entry
+- Daily/Weekly/Monthly Backup
+- Back-up to google drive/github
+- Settings Page
+  - purge trash after D-days
+  - theme
+  - language
+  - currency
+  - notifications
+  - export folder
+  - auto back-up
+  - review (expo)
+- Export to PDF/Excel
+- Category wise Statistics
+- Animations
+- custom confirmation dialogs
+
+## Future Considerations
+
+- About Us
+- Privacy Policy
+- Terms and Conditions
+- Rate Us
+- Share App
+- Contact Us
+- Help and Feedback
+- FAQ
+- Licenses
+- Change Log
+- Splash Screen
+- OnBoarding Screen
+- Dynamic theming
+- Implement Search
+- Implement Filter
+- Implement Sort
+- Multi-select entries
+- Select all entries
+- Delete selected entries
+- Update selected entries
+- Add to favorites
+- Remove from favorites
+- Biometric authentication
+- Password protection
+- PIN protection
+- Gesture lock
+- Cloud synchronization
+- Offline mode
+- Widgets
+- Shortcuts
+- Notifications for upcoming bills/subscriptions
+- Recurring transactions
+- Budgeting feature
+- Goal setting
+- Investment tracking
+- Debt tracking
+- Multi-currency support
+- Exchange rate updates
+- Receipt scanning
+- Voice input for transactions
+- AI-powered insights
+- Gamification (badges, streaks)
+- Community features (anonymous sharing of tips)
+- Integration with banking APIs (with user consent)
+- Expense splitting
+- Travel expense management
+- Subcategories
+- Transaction tags
+- Attachments to transactions (photos, documents)
+- Undo/Redo actions
+- Drag and drop reordering
+- Haptic feedback
+- Accessibility features (screen reader support, larger text)
+- User onboarding tour
+- Tooltips for new features
+- Contextual help
+- In-app tutorials
+- User feedback portal
+- Crash reporting
+- Analytics (anonymous and opt-in)
+- A/B testing for new features
+- Remote configuration
+- Push notifications for updates/promotions
+- Deep linking
+- Universal links
+- App indexing
+- SEO for app store
+- Localization for multiple languages
+- Right-to-left language support
+- Tablet optimization
+- Wearable device integration
+- Desktop application
+- Web application
+- API for third-party integrations
+- Open source some components
+- Contribution guidelines
+- Code of conduct
+- Security audit
+- GDPR compliance
+- CCPA compliance
+- Other regional privacy regulations compliance
+- End-to-end encryption for sensitive data
+- Two-factor authentication
+- Session management
+- Account recovery options
+- Data export in various formats (CSV, JSON)
+- Data import from other apps
+- Merge accounts
+- Delete account with data
+- Pause subscription
+- Cancel subscription
+- Refund policy
+- Terms of service
+- Acceptable use policy
+- Cookie policy
+- Disclaimer
+- Copyright notice
+- Brand guidelines
+- Press kit
+- Investor relations
+- Career opportunities
+- Blog/News section
