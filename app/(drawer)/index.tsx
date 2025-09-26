@@ -9,7 +9,7 @@ import {
   Pressable,
 } from 'react-native';
 import React, { useState } from 'react';
-import { Portal } from 'react-native-paper';
+import { Button, Dialog, Portal } from 'react-native-paper';
 import FloatingButton from '~/components/FloatingButton';
 import { useEntryStore } from '~/store/entryStore';
 import { useCategoryStore } from '~/store/categoryStore';
@@ -32,6 +32,9 @@ export default function Home() {
 
   const { showActionSheetWithOptions } = useActionSheet();
   const { colorScheme, colors, isDarkColorScheme } = useColorScheme();
+
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const [entryToDelete, setEntryToDelete] = useState<string | null>(null);
 
   // Filtered entries by selectedDate
   const formattedDate = selectedDate.toISOString().split('T')[0];
@@ -88,6 +91,19 @@ export default function Home() {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
     const paddingToBottom = 20;
     setAtEnd(layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom);
+  };
+
+  const confirmDeleteCategory = (id: string) => {
+    setEntryToDelete(id);
+    setDeleteDialogVisible(true);
+  };
+
+  const handleDeleteConfirmed = () => {
+    if (entryToDelete) {
+      removeEntry(entryToDelete, true);
+      setEntryToDelete(null);
+      setDeleteDialogVisible(false);
+    }
   };
 
   return (
@@ -210,7 +226,8 @@ export default function Home() {
                           break;
                         case 1:
                           // Delete
-                          removeEntry(entry.id);
+                          // removeEntry(entry.id);
+                          confirmDeleteCategory(entry.id);
                           break;
                         case 2:
                         // Cancel
@@ -244,6 +261,18 @@ export default function Home() {
       </ScrollView>
 
       <Portal>
+        <Dialog visible={deleteDialogVisible} onDismiss={() => setDeleteDialogVisible(false)}>
+          <Dialog.Title>Move to Trash?</Dialog.Title>
+          <Dialog.Content>
+            <Text className="text-foreground">
+              This will move the entry into trash. Are you sure?
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setDeleteDialogVisible(false)}>Cancel</Button>
+            <Button onPress={handleDeleteConfirmed}>OK</Button>
+          </Dialog.Actions>
+        </Dialog>
         <FloatingButton visible={!atEnd || dayEntries.length === 0} />
       </Portal>
     </SafeAreaView>
