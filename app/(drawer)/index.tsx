@@ -7,7 +7,6 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   Pressable,
-  Alert,
 } from 'react-native';
 import React, { useState } from 'react';
 import { Portal } from 'react-native-paper';

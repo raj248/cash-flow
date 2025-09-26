@@ -27,6 +27,8 @@ import useThemeAnimation from '~/hooks/useThemeAnimation';
 
 import { lightTheme, darkTheme } from '~/theme/theme';
 
+import Toast from 'react-native-toast-message';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 SplashScreen.preventAutoHideAsync();
 
 export {
@@ -51,6 +53,7 @@ export default function RootLayout() {
   }, [fontsLoaded]);
 
   useThemeAnimation();
+  const insets = useSafeAreaInsets();
   return (
     <>
       <AppStatusBar />
@@ -71,6 +74,7 @@ export default function RootLayout() {
                   <Stack.Screen name="new-entry" options={{ title: 'New Entry' }} />
                   <Stack.Screen name="edit-entry" options={{ title: 'Edit Entry' }} />
                 </Stack>
+                <Toast avoidKeyboard topOffset={insets.top + 16} />
               </NavThemeProvider>
             </ActionSheetProvider>
           </BottomSheetModalProvider>

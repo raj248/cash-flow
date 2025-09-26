@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import Feather from '@expo/vector-icons/Feather';
@@ -7,7 +7,9 @@ import { useCategoryStore } from '~/store/categoryStore';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEntryStore } from '~/store/entryStore';
-
+import { Dialog, Portal, Button } from 'react-native-paper';
+import { darkTheme, lightTheme } from '~/theme/theme';
+// import { Text } from '~/components/nativewindui/Text';
 export default function AddCategoryPage() {
   const { addCategory, removeCategory, categories } = useCategoryStore();
 
@@ -15,6 +17,9 @@ export default function AddCategoryPage() {
   const [income, setIncome] = useState(true);
   const [icon, setIcon] = useState<string | undefined>();
   const [iconImage, setIconImage] = useState<string | undefined>();
+
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
 
   const { isDarkColorScheme } = useColorScheme();
 
@@ -74,12 +79,19 @@ export default function AddCategoryPage() {
 
   // filter un-deleted categories
   const activeCategories = categories.filter((c) => !c.deletedAt);
-  // useEffect(() => {
-  //   if (activeCategories.length === 0) {
-  //     useCategoryStore.getState().populateDummyData();
-  //     useEntryStore.getState().populateDummyData();
-  //   }
-  // }, [activeCategories.length]);
+
+  const confirmDeleteCategory = (id: string) => {
+    setCategoryToDelete(id);
+    setDeleteDialogVisible(true);
+  };
+
+  const handleDeleteConfirmed = () => {
+    if (categoryToDelete) {
+      removeCategory(categoryToDelete, true);
+      setCategoryToDelete(null);
+      setDeleteDialogVisible(false);
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['bottom', 'left', 'right']}>
@@ -195,23 +207,7 @@ export default function AddCategoryPage() {
               </View>
 
               <TouchableOpacity
-                onPress={() => {
-                  Alert.alert(
-                    'Move to Trash?',
-                    'This will move the category into trash. Are you sure?',
-                    [
-                      {
-                        text: 'OK',
-                        onPress: () => removeCategory(c.id, true),
-                      },
-
-                      {
-                        text: 'Cancel',
-                        style: 'cancel',
-                      },
-                    ]
-                  );
-                }}
+                onPress={() => confirmDeleteCategory(c.id)}
                 className="bg-destructive/20 rounded-lg px-3 py-1">
                 <Text className="text-destructive">Delete</Text>
               </TouchableOpacity>
@@ -219,6 +215,21 @@ export default function AddCategoryPage() {
           ))}
         </View>
       </ScrollView>
+      {/* React Native Paper Dialog */}
+      <Portal>
+        <Dialog visible={deleteDialogVisible} onDismiss={() => setDeleteDialogVisible(false)}>
+          <Dialog.Title>Move to Trash?</Dialog.Title>
+          <Dialog.Content>
+            <Text className="text-foreground">
+              This will move the category into trash. Are you sure?
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setDeleteDialogVisible(false)}>Cancel</Button>
+            <Button onPress={handleDeleteConfirmed}>OK</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </SafeAreaView>
   );
 }

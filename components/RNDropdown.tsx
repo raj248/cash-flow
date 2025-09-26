@@ -13,14 +13,18 @@ export default function CategoryDropdownPicker({
   categoryId: string | undefined;
   setCategoryId: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
+  //  fileter non deleted categories
+
   const categories = useCategoryStore((s) => s.categories);
   const getCategoryIcon = useCategoryStore((s) => s.getCategoryIcon);
   const { isDarkColorScheme } = useColorScheme();
   const theme = isDarkColorScheme ? darkTheme.colors : lightTheme.colors;
 
+  const activeCategories = categories.filter((c) => !c.deletedAt);
+
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState(
-    categories.map((c) => ({
+    activeCategories.map((c) => ({
       label: c.name,
       value: c.id,
     }))

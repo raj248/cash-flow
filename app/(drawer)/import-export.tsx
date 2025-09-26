@@ -6,17 +6,18 @@ import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as DocumentPicker from 'expo-document-picker';
 import { exportData, importData } from '~/utils/exportImport';
+import Toast from 'react-native-toast-message';
 
 async function saveToDownloads(json: string) {
   // SAF → request access to a user folder
   const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
-
   if (!permissions.granted) {
-    alert('Permission not granted');
+    Toast.show({
+      type: 'error',
+      text1: 'Permission not granted!',
+    });
     return;
   }
-
-  const fileUri = `${permissions.directoryUri}/backup.json`;
 
   await FileSystem.StorageAccessFramework.createFileAsync(
     permissions.directoryUri,
@@ -25,7 +26,10 @@ async function saveToDownloads(json: string) {
   )
     .then(async (uri) => {
       await FileSystem.writeAsStringAsync(uri, json, { encoding: FileSystem.EncodingType.UTF8 });
-      alert('Backup saved successfully!');
+      Toast.show({
+        type: 'success',
+        text1: 'Backup saved successfully!',
+      });
     })
     .catch((err) => console.error('Error saving file', err));
 }
@@ -56,6 +60,10 @@ async function handleImport() {
   const json = await FileSystem.readAsStringAsync(res.assets[0].uri);
   const data = JSON.parse(json);
   importData(data);
+  Toast.show({
+    type: 'success',
+    text1: 'Backup imported successfully!',
+  });
 }
 
 export default function BackupScreen() {

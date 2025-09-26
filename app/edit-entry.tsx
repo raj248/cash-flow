@@ -1,7 +1,6 @@
-// app/edit-entry.tsx
 import React, { useState, useEffect } from 'react';
-import { ScrollView, View } from 'react-native';
-import { Button, TextInput, Text, Card } from 'react-native-paper';
+import { ScrollView } from 'react-native';
+import { Button, TextInput, Text, Card, HelperText } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Feather } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -28,6 +27,10 @@ export default function EditEntryPage() {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  // error states
+  const [amountError, setAmountError] = useState('');
+  const [categoryError, setCategoryError] = useState('');
+
   // pre-fill on mount
   useEffect(() => {
     if (entry) {
@@ -39,17 +42,23 @@ export default function EditEntryPage() {
   }, [entry]);
 
   const handleSave = () => {
+    let hasError = false;
+    setAmountError('');
+    setCategoryError('');
+
     const parsedAmount = parseFloat(amount);
 
     if (!amount || isNaN(parsedAmount) || parsedAmount <= 0) {
-      alert('Please enter a valid amount greater than 0');
-      return;
+      setAmountError('Please enter a valid amount greater than 0');
+      hasError = true;
     }
 
     if (!categoryId) {
-      alert('Please select a category');
-      return;
+      setCategoryError('Please select a category');
+      hasError = true;
     }
+
+    if (hasError) return;
 
     updateEntry(entry!.id, {
       amount: parsedAmount,
@@ -82,7 +91,11 @@ export default function EditEntryPage() {
               onChangeText={setAmount}
               keyboardType="numeric"
               mode="outlined"
+              error={!!amountError}
             />
+            <HelperText type="error" visible={!!amountError}>
+              {amountError}
+            </HelperText>
           </Card.Content>
         </Card>
 
@@ -91,6 +104,9 @@ export default function EditEntryPage() {
           <Card.Content className="gap-2">
             <Text variant="labelLarge">Category</Text>
             <CategoryDropdownPicker categoryId={categoryId} setCategoryId={setCategoryId} />
+            <HelperText type="error" visible={!!categoryError}>
+              {categoryError}
+            </HelperText>
           </Card.Content>
         </Card>
 

@@ -1,7 +1,9 @@
 ## TODO
 
 - (DONE) Edit Entry
-- swipe gesture delete/ edit
+- Custom confirmation dialogs
+- Animations
+- Swipe gesture delete/ edit
 - Settings Page
   - purge trash after D-days
   - theme
@@ -11,9 +13,8 @@
   - export folder
   - auto back-up
   - review (expo)
+- Undo snackbar on delete
 - Daily/Weekly/Monthly Backup
-- custom confirmation dialogs
-- Animations
 - Category wise Statistics
 - Back-up to google drive/github
 - Export to PDF/Excel
