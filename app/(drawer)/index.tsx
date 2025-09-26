@@ -21,6 +21,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useColorScheme } from '~/lib/useColorScheme';
 import DateTimePicker from '@react-native-community/datetimepicker'; // 👈 install this
 import { cn } from '~/lib/cn';
+import { router } from 'expo-router';
 
 export default function Home() {
   const { getEntriesByDate, removeEntry } = useEntryStore();
@@ -206,12 +207,7 @@ export default function Home() {
                     (selectedIndex) => {
                       switch (selectedIndex) {
                         case 0:
-                          // Edit
-                          Alert.alert(
-                            'Not Implemented Yet',
-                            'This feature is not implemented yet.',
-                            [{ text: 'OK', onPress: () => console.log('OK Pressed') }]
-                          );
+                          router.push(`/edit-entry?id=${entry.id}`);
                           break;
                         case 1:
                           // Delete

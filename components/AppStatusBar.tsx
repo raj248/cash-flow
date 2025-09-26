@@ -9,6 +9,7 @@ export default function AppStatusBar() {
       key={`root-status-bar-${isDarkColorScheme ? 'dark' : 'light'}`}
       style={isDarkColorScheme ? 'light' : 'light'}
       animated
+      translucent={false}
       backgroundColor={
         isDarkColorScheme
           ? 'rgba(0,0,0,0.8)' // dark mode background (semi-transparent black)

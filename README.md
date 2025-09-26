@@ -1,8 +1,7 @@
 ## TODO
 
-- Edit Entry
-- Daily/Weekly/Monthly Backup
-- Back-up to google drive/github
+- (DONE) Edit Entry
+- swipe gesture delete/ edit
 - Settings Page
   - purge trash after D-days
   - theme
@@ -12,10 +11,12 @@
   - export folder
   - auto back-up
   - review (expo)
-- Export to PDF/Excel
-- Category wise Statistics
-- Animations
+- Daily/Weekly/Monthly Backup
 - custom confirmation dialogs
+- Animations
+- Category wise Statistics
+- Back-up to google drive/github
+- Export to PDF/Excel
 
 ## Future Considerations
 

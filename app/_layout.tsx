@@ -69,6 +69,7 @@ export default function RootLayout() {
                   <Stack.Screen name="(drawer)" options={DRAWER_OPTIONS} />
                   <Stack.Screen name="modal" options={MODAL_OPTIONS} />
                   <Stack.Screen name="new-entry" options={{ title: 'New Entry' }} />
+                  <Stack.Screen name="edit-entry" options={{ title: 'Edit Entry' }} />
                 </Stack>
               </NavThemeProvider>
             </ActionSheetProvider>

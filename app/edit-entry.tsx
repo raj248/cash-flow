@@ -1,30 +1,44 @@
-// app/add-entry.tsx
-import React, { useState } from 'react';
+// app/edit-entry.tsx
+import React, { useState, useEffect } from 'react';
 import { ScrollView, View } from 'react-native';
 import { Button, TextInput, Text, Card } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Feather } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { useLocalSearchParams, router } from 'expo-router';
 
 import { useEntryStore } from '~/store/entryStore';
 import { useCategoryStore } from '~/store/categoryStore';
 import CategoryDropdownPicker from '~/components/RNDropdown';
 import { useColorScheme } from '~/lib/useColorScheme';
 
-export default function NewEntryPage() {
+export default function EditEntryPage() {
+  const { id } = useLocalSearchParams<{ id: string }>();
   const { colors } = useColorScheme();
-  const addEntry = useEntryStore((s) => s.addEntry);
+  const updateEntry = useEntryStore((s) => s.updateEntry);
+  const entries = useEntryStore((s) => s.entries);
   const categories = useCategoryStore((s) => s.categories);
 
+  const entry = entries.find((e) => e.id === id);
+
+  // local states
   const [amount, setAmount] = useState('');
   const [categoryId, setCategoryId] = useState<string | undefined>(undefined);
   const [note, setNote] = useState('');
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  // pre-fill on mount
+  useEffect(() => {
+    if (entry) {
+      setAmount(entry.amount.toString());
+      setCategoryId(entry.categoryId ?? undefined);
+      setNote(entry.note || '');
+      setDate(new Date(entry.date));
+    }
+  }, [entry]);
+
   const handleSave = () => {
-    // validate amount
     const parsedAmount = parseFloat(amount);
 
     if (!amount || isNaN(parsedAmount) || parsedAmount <= 0) {
@@ -37,25 +51,28 @@ export default function NewEntryPage() {
       return;
     }
 
-    addEntry({
+    updateEntry(entry!.id, {
       amount: parsedAmount,
       categoryId,
       date: date.toISOString().split('T')[0],
       note,
     });
 
-    // reset form
-    setAmount('');
-    setNote('');
-    setCategoryId(undefined);
-    setDate(new Date());
     router.back();
   };
+
+  if (!entry) {
+    return (
+      <SafeAreaView className="flex-1 items-center justify-center">
+        <Text>Entry not found</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['top', 'bottom', 'left', 'right']}>
       <ScrollView className="flex-1 p-4" contentContainerStyle={{ gap: 16 }}>
-        {/* Amount Section */}
+        {/* Amount */}
         <Card mode="outlined">
           <Card.Content className="gap-2">
             <Text variant="labelLarge">Amount</Text>
@@ -69,7 +86,7 @@ export default function NewEntryPage() {
           </Card.Content>
         </Card>
 
-        {/* Category Section */}
+        {/* Category */}
         <Card mode="outlined">
           <Card.Content className="gap-2">
             <Text variant="labelLarge">Category</Text>
@@ -77,7 +94,7 @@ export default function NewEntryPage() {
           </Card.Content>
         </Card>
 
-        {/* Date Section */}
+        {/* Date */}
         <Card mode="outlined">
           <Card.Content className="gap-2">
             <Text variant="labelLarge">Date</Text>
@@ -101,7 +118,7 @@ export default function NewEntryPage() {
           </Card.Content>
         </Card>
 
-        {/* Note Section */}
+        {/* Note */}
         <Card mode="outlined">
           <Card.Content className="gap-2">
             <Text variant="labelLarge">Note (optional)</Text>
@@ -115,13 +132,13 @@ export default function NewEntryPage() {
           </Card.Content>
         </Card>
 
-        {/* Save Button */}
+        {/* Save */}
         <Button
           mode="contained"
           onPress={handleSave}
           className="mt-4"
           style={{ borderRadius: 8, paddingVertical: 6 }}>
-          Save Entry
+          Update Entry
         </Button>
       </ScrollView>
     </SafeAreaView>
