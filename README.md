@@ -1,7 +1,7 @@
 ## TODO
 
 - (DONE) Edit Entry
-- Custom confirmation dialogs
+- (DONE) Custom confirmation dialogs
 - Animations
 - Swipe gesture delete/ edit
 - Settings Page

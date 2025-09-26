@@ -1,12 +1,13 @@
 // app/trash.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, View, Alert, TouchableOpacity, Image } from 'react-native';
-import { Text } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons';
 import { useEntryStore } from '~/store/entryStore';
 import { useCategoryStore } from '~/store/categoryStore';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { CategoryIcon } from '~/components/CategoryIcon';
+
+import { Text, Dialog, Portal, Button, RadioButton } from 'react-native-paper';
 
 export default function TrashPage() {
   const { colors } = useColorScheme();
@@ -22,50 +23,40 @@ export default function TrashPage() {
   const trashedEntries = entries.filter((e) => e.deletedAt);
   const trashedCategories = categories.filter((c) => c.deletedAt);
 
-  const handleDeleteCategory = (id: string) => {
-    Alert.alert(
-      'Delete Category',
-      'Do you want to delete all entries under this category or keep them?',
-      [
-        {
-          text: 'Keep Entries',
-          onPress: () =>
-            removeCategory(id, false, (catId: string) =>
-              useEntryStore.getState().removeEntriesByCategory(catId, false)
-            ),
-        },
-        {
-          text: 'Delete Entries',
-          style: 'destructive',
-          onPress: () =>
-            removeCategory(id, false, (catId) =>
-              useEntryStore.getState().removeEntriesByCategory(catId, true)
-            ),
-        },
-        { text: 'Cancel', style: 'cancel' },
-      ]
-    );
+  // --- Dialog state ---
+  const [catDialogVisible, setCatDialogVisible] = useState(false);
+  const [selectedCatId, setSelectedCatId] = useState<string | null>(null);
+  const [catDeleteOption, setCatDeleteOption] = useState<'keep' | 'delete'>('keep');
+
+  const [purgeDialogVisible, setPurgeDialogVisible] = useState(false);
+
+  // --- Handlers ---
+  const openDeleteCategoryDialog = (id: string) => {
+    setSelectedCatId(id);
+    setCatDeleteOption('keep');
+    setCatDialogVisible(true);
   };
 
-  const handlePurgeAll = () => {
-    Alert.alert('Purge Trash', 'This will permanently delete all trashed items.', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Purge',
-        style: 'destructive',
-        onPress: () => {
-          purgeTrash();
-          purgeCatTrash();
-        },
-      },
-    ]);
+  const confirmDeleteCategory = () => {
+    if (!selectedCatId) return;
+
+    removeCategory(selectedCatId, false, (catId) =>
+      useEntryStore.getState().removeEntriesByCategory(catId, catDeleteOption === 'delete')
+    );
+    setCatDialogVisible(false);
+  };
+
+  const confirmPurgeAll = () => {
+    purgeTrash();
+    purgeCatTrash();
+    setPurgeDialogVisible(false);
   };
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16, gap: 16 }}>
       {/* Purge All */}
       <TouchableOpacity
-        onPress={handlePurgeAll}
+        onPress={() => setPurgeDialogVisible(true)}
         className="mb-4 rounded-xl bg-destructive px-4 py-3">
         <Text className="text-center font-semibold text-white">Purge All Trash</Text>
       </TouchableOpacity>
@@ -101,7 +92,7 @@ export default function TrashPage() {
               <Text className="text-primary">Restore</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => handleDeleteCategory(c.id)}
+              onPress={() => openDeleteCategoryDialog(c.id)}
               className="bg-destructive/20 rounded-lg px-3 py-1">
               <Text className="text-destructive">Delete</Text>
             </TouchableOpacity>
@@ -155,6 +146,47 @@ export default function TrashPage() {
           </View>
         );
       })}
+      {/* --- Category Delete Dialog --- */}
+      <Portal>
+        <Dialog visible={catDialogVisible} onDismiss={() => setCatDialogVisible(false)}>
+          <Dialog.Title>Delete Category</Dialog.Title>
+          <Dialog.Content>
+            <Text>Do you want to delete all entries under this category or keep them?</Text>
+            <RadioButton.Group
+              onValueChange={(v) => setCatDeleteOption(v as 'keep' | 'delete')}
+              value={catDeleteOption}>
+              <RadioButton.Item label="Keep Entries" value="keep" />
+              <RadioButton.Item label="Delete Entries" value="delete" />
+            </RadioButton.Group>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setCatDialogVisible(false)}>Cancel</Button>
+            <Button onPress={confirmDeleteCategory} mode="contained" textColor="white">
+              Delete
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+
+        {/* --- Purge All Dialog --- */}
+        <Dialog visible={purgeDialogVisible} onDismiss={() => setPurgeDialogVisible(false)}>
+          <Dialog.Title>Purge Trash</Dialog.Title>
+          <Dialog.Content>
+            <Text>This will permanently delete all trashed items.</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button className="px-2" onPress={() => setPurgeDialogVisible(false)}>
+              Cancel
+            </Button>
+            <Button
+              className="bg-destructive px-2"
+              onPress={confirmPurgeAll}
+              mode="contained"
+              textColor="white">
+              Purge
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </ScrollView>
   );
 }
