@@ -7,7 +7,7 @@
 - undo button after delete
 
 - Settings Page
-  - purge trash after D-days
+  - (DONE) purge trash after D-days
   - theme
   - language
   - currency
