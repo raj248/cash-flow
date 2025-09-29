@@ -4,6 +4,8 @@
 - (DONE) Custom confirmation dialogs
 - Animations
 - Swipe gesture delete/ edit
+- undo button after delete
+
 - Settings Page
   - purge trash after D-days
   - theme

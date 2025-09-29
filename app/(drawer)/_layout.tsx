@@ -54,22 +54,23 @@ const DrawerLayout = () => (
         drawerIcon: ({ size, color }) => <Feather name="trash" size={size} color={color} />,
       }}
     />
-    <Drawer.Screen
-      name="(tabs)"
-      options={{
-        drawerItemStyle: {
-          display: 'none',
-        },
-        headerTitle: 'Tabs',
-        drawerLabel: 'Tabs',
-        drawerIcon: ({ size, color }) => <Feather name="airplay" size={size} color={color} />,
-        headerRight: () => (
-          <Link href="/modal" asChild>
-            <HeaderButton />
-          </Link>
-        ),
-      }}
-    />
+
+    {/* Show only in development */}
+    {__DEV__ && (
+      <Drawer.Screen
+        name="(tabs)"
+        options={{
+          headerTitle: 'Tabs',
+          drawerLabel: 'Tabs (Dev)',
+          drawerIcon: ({ size, color }) => <Feather name="airplay" size={size} color={color} />,
+          headerRight: () => (
+            <Link href="/modal" asChild>
+              <HeaderButton />
+            </Link>
+          ),
+        }}
+      />
+    )}
   </Drawer>
 );
 

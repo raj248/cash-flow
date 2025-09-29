@@ -1,35 +1,46 @@
-import { Icon } from '@roninoss/icons';
-import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Linking, Platform, View } from 'react-native';
-import { Button } from '~/components/Button';
-
+import { Platform, View } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { Text } from '~/components/nativewindui/Text';
 import { useColorScheme } from '~/lib/useColorScheme';
+import { useSettingsStore } from '~/store/settingsStore';
+import { Button } from '~/components/Button';
 
 export default function SettingsScreen() {
   const { colors, colorScheme } = useColorScheme();
+  const { trashRetentionDays, setTrashRetentionDays } = useSettingsStore();
+
   return (
     <>
       <StatusBar
         style={Platform.OS === 'ios' ? 'light' : colorScheme === 'dark' ? 'light' : 'dark'}
       />
-      <View className="flex-1 items-center justify-center gap-1 px-12">
-        <Icon name="file-plus-outline" size={42} color={colors.grey} />
-        <Text variant="title3" className="pb-1 text-center font-semibold">
-          NativeWindUI
+      <View className="flex-1 gap-6 p-6">
+        <Text variant="title3" className="font-semibold">
+          Settings
         </Text>
-        <Text color="tertiary" variant="subhead" className="pb-4 text-center">
-          You can install any of the free components from the{' '}
-          <Text
-            onPress={() => Linking.openURL('https://nativewindui.com')}
-            variant="subhead"
-            className="text-primary">
-            NativeWindUI
+
+        {/* Retention Days Setting */}
+        <View className="gap-2">
+          <Text variant="subhead">Trash Retention (days)</Text>
+          <TextInput
+            mode="outlined"
+            keyboardType="numeric"
+            value={trashRetentionDays.toString()}
+            onChangeText={(val) => {
+              const num = parseInt(val, 10);
+              if (!isNaN(num) && num > 0) {
+                setTrashRetentionDays(num);
+              }
+            }}
+          />
+          <Text color="tertiary" variant="footnote">
+            Entries in trash older than {trashRetentionDays} days will be purged automatically.
           </Text>
-          {' website.'}
-        </Text>
-        <Button title="index template" onPress={() => router.push('/index_template')} />
+        </View>
+
+        {/* Example: Go back button */}
+        <Button title="Back" onPress={() => {}} />
       </View>
     </>
   );

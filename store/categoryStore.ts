@@ -5,6 +5,7 @@ import { create } from 'zustand';
 import 'react-native-get-random-values';
 import { nanoid } from 'nanoid/non-secure';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import { useSettingsStore } from './settingsStore';
 
 export type Category = {
   id: string; // unique identifier
@@ -28,6 +29,7 @@ type CategoryState = {
   restoreCategory: (id: string) => void;
   getCategoryIcon: (id: string) => { icon?: string; iconImage?: string; color?: string } | null;
   setCategories: (cats: Category[]) => void;
+  purgeExpired: (retentionDays: number) => void;
   populateDummyData: () => void;
 };
 
@@ -93,6 +95,19 @@ export const useCategoryStore = create<CategoryState>()(
 
       setCategories: (cats) => set({ categories: cats }),
 
+      purgeExpired: (retentionDays) => {
+        const now = new Date().getTime();
+        const cutoff = retentionDays * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+
+        set((state) => ({
+          categories: state.categories.filter((cat) => {
+            if (!cat.deletedAt) return true; // keep non-deleted categories
+            const deletedAt = new Date(cat.deletedAt).getTime();
+            return now - deletedAt < cutoff; // keep only items newer than cutoff
+          }),
+        }));
+      },
+
       populateDummyData: () => {
         const now = new Date().toISOString();
         const dummyCategories: Category[] = [
@@ -148,6 +163,14 @@ export const useCategoryStore = create<CategoryState>()(
     {
       name: 'category-storage',
       storage: createJSONStorage(() => AsyncStorage),
+      onRehydrateStorage: () => (state, error) => {
+        if (error) {
+          console.error('Failed to rehydrate category store', error);
+        } else if (state) {
+          const retentionDays = useSettingsStore.getState().trashRetentionDays;
+          state.purgeExpired(retentionDays);
+        }
+      },
     }
   )
 );

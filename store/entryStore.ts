@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { nanoid } from 'nanoid/non-secure';
 import { useCategoryStore } from './categoryStore';
+import { useSettingsStore } from './settingsStore';
 
 export type Entry = {
   id: string;
@@ -24,9 +25,10 @@ type EntryState = {
   restoreEntry: (id: string) => void; // undo soft delete
   removeEntriesByCategory: (categoryId: string, removeAll?: boolean) => void;
   purgeTrash: () => void;
-  getTodayEntries: () => Entry[]; // ✅ new
+  getTodayEntries: () => Entry[];
   getEntriesByDate: (date: string) => Entry[];
 
+  purgeExpired: (retentionDays: number) => void;
   setEntries: (entries: Entry[]) => void;
   populateDummyData: () => void;
 };
@@ -102,6 +104,19 @@ export const useEntryStore = create<EntryState>()(
         return all.filter((e) => e.date === date && !e.deletedAt);
       },
 
+      purgeExpired: (rententionDays) => {
+        const now = new Date().getTime();
+        const cutoff = rententionDays * 24 * 60 * 60 * 1000;
+
+        set((state) => ({
+          entries: state.entries.filter((e) => {
+            if (!e.deletedAt) return true;
+            const deletedAt = new Date(e.deletedAt).getTime();
+            return now - deletedAt < cutoff; // keep only items newer than cutoff
+          }),
+        }));
+      },
+
       setEntries: (entries) => set({ entries }),
 
       populateDummyData: () => {
@@ -143,6 +158,14 @@ export const useEntryStore = create<EntryState>()(
     {
       name: 'entry-storage',
       storage: createJSONStorage(() => AsyncStorage),
+      onRehydrateStorage: () => (state, error) => {
+        if (error) {
+          console.error('Failed to rehydrate entry store', error);
+        } else if (state) {
+          const retentionDays = useSettingsStore.getState().trashRetentionDays; // or get this from settings store
+          state.purgeExpired(retentionDays);
+        }
+      },
     }
   )
 );
