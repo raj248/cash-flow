@@ -106,13 +106,17 @@ export const useEntryStore = create<EntryState>()(
 
       purgeExpired: (rententionDays) => {
         const now = new Date().getTime();
+        // const cutoff = rententionDays * 60 * 1000;
         const cutoff = rententionDays * 24 * 60 * 60 * 1000;
+        // console.log('cutoff', cutoff);
 
         set((state) => ({
           entries: state.entries.filter((e) => {
             if (!e.deletedAt) return true;
             const deletedAt = new Date(e.deletedAt).getTime();
-            return now - deletedAt < cutoff; // keep only items newer than cutoff
+            const verdict = now - deletedAt < cutoff;
+            // console.log('verdict', verdict, e.id, deletedAt);
+            return verdict; // keep only items newer than cutoff
           }),
         }));
       },
@@ -162,6 +166,8 @@ export const useEntryStore = create<EntryState>()(
         if (error) {
           console.error('Failed to rehydrate entry store', error);
         } else if (state) {
+          console.log('Rehydrated entry store successfully.');
+          // Purge expired entries
           const retentionDays = useSettingsStore.getState().trashRetentionDays; // or get this from settings store
           state.purgeExpired(retentionDays);
         }
