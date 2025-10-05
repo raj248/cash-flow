@@ -77,8 +77,8 @@ export default function Home() {
       return (
         <Feather
           name={cat.icon as any}
-          size={20}
-          color={cat.color ?? 'black'}
+          size={25}
+          color={cat.color ?? 'white'}
           style={{ marginRight: 15 }}
         />
       );
@@ -152,20 +152,29 @@ export default function Home() {
         {/* Income Section */}
         <View className="mb-4">
           <Text className="mb-2 text-lg font-bold text-foreground">Income Sources</Text>
+
           <View className="flex-row flex-wrap justify-between">
             {incomeCategories.map((cat) => (
               <View
                 key={cat.id}
-                className="mb-3 w-[48%] flex-row items-center rounded-xl bg-green-100 p-4 shadow dark:bg-green-900">
-                {renderCategoryIcon(cat)}
-                <View>
-                  <Text className="font-semibold text-green-700 dark:text-green-300">
-                    {cat.name}
-                  </Text>
-                  <Text className="mt-1 text-lg font-bold text-green-800 dark:text-green-200">
+                className="mb-3 w-[48%] rounded-xl bg-green-100 p-4 shadow dark:bg-green-900">
+                {/* Top row: Icon + Amount */}
+                <View className="mb-2 flex-row items-center justify-between">
+                  <View className="flex-row items-center">{renderCategoryIcon(cat)}</View>
+
+                  <Text className="text-base font-bold text-green-800 dark:text-green-200">
                     ₹{cat.total}
                   </Text>
                 </View>
+
+                {/* Bottom row: Category name */}
+                <Text
+                  className="text-sm font-semibold text-green-700 dark:text-green-300"
+                  style={{ textAlign: 'center', textAlignVertical: 'bottom' }}
+                  numberOfLines={2}
+                  ellipsizeMode="tail">
+                  {cat.name}
+                </Text>
               </View>
             ))}
           </View>
@@ -178,14 +187,21 @@ export default function Home() {
             {expenseCategories.map((cat) => (
               <View
                 key={cat.id}
-                className="mb-3 w-[48%] flex-row items-center rounded-xl bg-red-100 p-4 shadow dark:bg-red-900">
-                {renderCategoryIcon(cat)}
-                <View>
-                  <Text className="font-semibold text-red-700 dark:text-red-300">{cat.name}</Text>
-                  <Text className="mt-1 text-lg font-bold text-red-800 dark:text-red-200">
+                className="mb-3 w-[48%] rounded-xl bg-red-100 p-4 shadow dark:bg-red-900">
+                <View className="mb-2 flex-row items-center justify-between">
+                  <View className="flex-row items-center">{renderCategoryIcon(cat)}</View>
+                  <Text className="text-base font-bold text-red-800 dark:text-red-200">
                     ₹{cat.total}
                   </Text>
                 </View>
+
+                <Text
+                  className="text-sm font-semibold text-red-700 dark:text-red-300"
+                  style={{ textAlign: 'center', textAlignVertical: 'bottom' }}
+                  numberOfLines={2}
+                  ellipsizeMode="tail">
+                  {cat.name}
+                </Text>
               </View>
             ))}
           </View>
@@ -225,8 +241,6 @@ export default function Home() {
                           router.push(`/edit-entry?id=${entry.id}`);
                           break;
                         case 1:
-                          // Delete
-                          // removeEntry(entry.id);
                           confirmDeleteCategory(entry.id);
                           break;
                         case 2:
@@ -238,7 +252,7 @@ export default function Home() {
                 <CategoryIcon
                   categoryId={category?.id ?? 'N/A'}
                   size={30}
-                  color={category?.color || 'black'}
+                  color={category?.color || 'white'}
                 />
 
                 <View className="flex-1">
