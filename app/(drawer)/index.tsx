@@ -153,13 +153,13 @@ export default function Home() {
         <View className="mb-4">
           <Text className="mb-2 text-lg font-bold text-foreground">Income Sources</Text>
 
-          <View className="flex-row flex-wrap justify-between">
+          <View className="flex-row flex-wrap justify-around">
             {incomeCategories.map((cat) => (
               <View
                 key={cat.id}
                 className="mb-3 w-[48%] rounded-xl bg-green-100 p-4 shadow dark:bg-green-900">
                 {/* Top row: Icon + Amount */}
-                <View className="mb-2 flex-row items-center justify-between">
+                <View className="mb-2 flex-row items-center justify-stretch">
                   <View className="flex-row items-center">{renderCategoryIcon(cat)}</View>
 
                   <Text className="text-base font-bold text-green-800 dark:text-green-200">
@@ -262,7 +262,7 @@ export default function Home() {
                   </Text>
                   <Text className="text-sm text-muted-foreground">{entry.note}</Text>
                   <Text className="text-xs text-muted-foreground">
-                    {new Date(entry.date).toLocaleDateString()}
+                    {new Date(entry.date).toLocaleTimeString()}
                   </Text>
                 </View>
                 <Text

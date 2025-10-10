@@ -10,7 +10,7 @@ export type Entry = {
   userId?: string;
   categoryId: string | null;
   amount: number;
-  date: string; // ISO format (YYYY-MM-DD)
+  date: string; // ISO format (YYYY-MM-DD:HH-MM-SS)
   note?: string;
   createdAt: string;
   updatedAt: string;
@@ -95,13 +95,13 @@ export const useEntryStore = create<EntryState>()(
       getTodayEntries: () => {
         const today = new Date().toISOString().split('T')[0];
         return get().entries.filter(
-          (e) => e.date === today && !e.deletedAt // ignore soft-deleted
+          (e) => e.date.split('T')[0] === today && !e.deletedAt // ignore soft-deleted
         );
       },
 
       getEntriesByDate: (date) => {
         const all = get().entries;
-        return all.filter((e) => e.date === date && !e.deletedAt);
+        return all.filter((e) => e.date.split('T')[0] === date && !e.deletedAt);
       },
 
       purgeExpired: (rententionDays) => {
@@ -137,7 +137,7 @@ export const useEntryStore = create<EntryState>()(
         for (let i = 0; i < 30; i++) {
           const day = new Date(now);
           day.setDate(now.getDate() - i);
-          const dateStr = day.toISOString().split('T')[0];
+          const dateStr = day.toISOString();
 
           // For each day, pick 1–3 random categories
           const numEntries = Math.floor(Math.random() * 5) + 1;

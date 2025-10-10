@@ -38,7 +38,7 @@ export default function NewEntryPage() {
     addEntry({
       amount: parsedAmount,
       categoryId,
-      date: date.toISOString().split('T')[0],
+      date: date.toISOString(),
       note,
     });
 

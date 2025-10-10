@@ -16,10 +16,10 @@ export function AnalyticsChart({ initialFrom, initialTo }: Props) {
   const chartData = useMemo(() => {
     const filtered = entries.filter(
       (e) =>
-        e.date >= initialFrom.toISOString().split('T')[0] &&
-        e.date <= initialTo.toISOString().split('T')[0]
+        e.date.split('T')[0] >= initialFrom.toISOString().split('T')[0] &&
+        e.date.split('T')[0] <= initialTo.toISOString().split('T')[0]
     );
-
+    console.log('Filetered entry length: ', filtered.length);
     // Build full day range
     const days: string[] = [];
     const cursor = new Date(initialFrom);
@@ -32,7 +32,7 @@ export function AnalyticsChart({ initialFrom, initialTo }: Props) {
       const total = filtered
         .filter((e) => {
           const cat = categories.find((c) => c.id === e.categoryId);
-          return e.date === day && cat?.type === 'income';
+          return e.date.split('T')[0] === day && cat?.type === 'income';
         })
         .reduce((acc, e) => acc + e.amount, 0);
 
@@ -48,7 +48,7 @@ export function AnalyticsChart({ initialFrom, initialTo }: Props) {
       const total = filtered
         .filter((e) => {
           const cat = categories.find((c) => c.id === e.categoryId);
-          return e.date === day && cat?.type === 'expense';
+          return e.date.split('T')[0] === day && cat?.type === 'expense';
         })
         .reduce((acc, e) => acc + e.amount, 0);
 
