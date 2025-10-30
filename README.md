@@ -21,6 +21,8 @@
 - Back-up to google drive/github
 - Export to PDF/Excel
 - Add Budget limits per category
+- Monthly budget
+- App Lock
 
 ## Future Considerations
 
