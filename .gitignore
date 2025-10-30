@@ -14,9 +14,9 @@ expo-env.d.ts
 
 
 
-ios
-android
-
+/ios
+/android
+build
 # macOS
 .DS_Store
 

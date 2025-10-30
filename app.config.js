@@ -1,5 +1,4 @@
 // build icons from expo-icon-builder.com
-
 export default {
   expo: {
     name: 'Cash Flow - Daily Khata',
@@ -12,6 +11,7 @@ export default {
       favicon: './assets/favicon.png',
     },
     plugins: [
+      // './plugins/listener.js',
       'expo-router',
       [
         'expo-dev-launcher',
@@ -51,6 +51,7 @@ export default {
         backgroundImage: './assets/adaptive-icon/background.png',
       },
       package: 'com.lexius.flow.cash',
+      permissions: ['RECEIVE_SMS'],
     },
     extra: {
       router: {},
