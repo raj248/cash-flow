@@ -1,3 +1,10 @@
+internal, alpha, beta, production
+
+```
+eas build --platform android --local --profile production --output ./my-local-build.aab
+eas submit --platform android --profile production --path ./my-local-build.aab
+```
+
 ## TODO
 
 - (DONE) Edit Entry

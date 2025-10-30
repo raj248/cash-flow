@@ -4,7 +4,7 @@ export default {
   expo: {
     name: 'Cash Flow - Daily Khata',
     slug: 'cash-flow',
-    version: '1.0.5',
+    version: '1.0.5a',
     scheme: 'cash-flow',
     web: {
       bundler: 'metro',
