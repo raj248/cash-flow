@@ -23,6 +23,7 @@
 - Add Budget limits per category
 - Monthly budget
 - App Lock
+- SMS Transaction Alert automation
 
 ## Future Considerations
 
