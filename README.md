@@ -20,6 +20,7 @@
 - Category wise Statistics
 - Back-up to google drive/github
 - Export to PDF/Excel
+- Add Budget limits per category
 
 ## Future Considerations
 
