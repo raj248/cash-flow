@@ -3,7 +3,7 @@ export default {
   expo: {
     name: 'Cash Flow - Daily Khata',
     slug: 'cash-flow',
-    version: '1.0.5a',
+    version: '1.0.6-alpha.1',
     scheme: 'cash-flow',
     web: {
       bundler: 'metro',
@@ -51,7 +51,7 @@ export default {
         backgroundImage: './assets/adaptive-icon/background.png',
       },
       package: 'com.lexius.flow.cash',
-      permissions: ['RECEIVE_SMS'],
+      // permissions: ['RECEIVE_SMS'],
     },
     extra: {
       router: {},

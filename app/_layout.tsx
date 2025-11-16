@@ -29,6 +29,7 @@ import { lightTheme, darkTheme } from '~/theme/theme';
 
 import Toast from 'react-native-toast-message';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useInAppUpdates } from '~/hooks/useInAppUpdates';
 SplashScreen.preventAutoHideAsync();
 
 export {
@@ -52,6 +53,7 @@ export default function RootLayout() {
     }
   }, [fontsLoaded]);
 
+  useInAppUpdates();
   useThemeAnimation();
   const insets = useSafeAreaInsets();
   return (
