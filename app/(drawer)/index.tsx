@@ -89,7 +89,7 @@ export default function Home() {
   // Scroll detection
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-    const paddingToBottom = 20;
+    const paddingToBottom = 30;
     setAtEnd(layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom);
   };
 

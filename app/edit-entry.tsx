@@ -63,7 +63,7 @@ export default function EditEntryPage() {
     updateEntry(entry!.id, {
       amount: parsedAmount,
       categoryId,
-      date: date.toISOString().split('T')[0],
+      date: date.toISOString(),
       note,
     });
 
