@@ -54,6 +54,7 @@ export default {
       // permissions: ['RECEIVE_SMS'],
     },
     extra: {
+      env: process.env.APP_ENV || "development",
       router: {},
       eas: {
         projectId: 'eb43fecc-7760-4f15-8051-299890b1fc9a',

@@ -3,7 +3,10 @@ import { Link } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 
 import { HeaderButton } from '../../components/HeaderButton';
+import Constants from 'expo-constants';
 
+const isProd = Constants.expoConfig?.extra?.env === 'production';
+console.log('isProd: ', isProd);
 const DrawerLayout = () => (
   <Drawer backBehavior="history">
     <Drawer.Screen
@@ -56,21 +59,22 @@ const DrawerLayout = () => (
     />
 
     {/* Show only in development */}
-    {__DEV__ && (
-      <Drawer.Screen
-        name="(tabs)"
-        options={{
-          headerTitle: 'Tabs',
-          drawerLabel: 'Tabs (Dev)',
-          drawerIcon: ({ size, color }) => <Feather name="airplay" size={size} color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <HeaderButton />
-            </Link>
-          ),
-        }}
-      />
-    )}
+
+    <Drawer.Screen
+      name="(tabs)"
+      options={{
+        drawerItemStyle: { display: isProd ? 'none' : 'flex' },
+        headerTitle: 'Tabs',
+        drawerLabel: 'Tabs (Dev)',
+        // drawerContentStyle: { display: 'none' },
+        drawerIcon: ({ size, color }) => <Feather name="airplay" size={size} color={color} />,
+        headerRight: () => (
+          <Link href="/modal" asChild>
+            <HeaderButton />
+          </Link>
+        ),
+      }}
+    />
   </Drawer>
 );
 
