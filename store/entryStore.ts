@@ -147,7 +147,7 @@ export const useEntryStore = create<EntryState>()(
             dummyEntries.push({
               id: nanoid(),
               categoryId: category.id,
-              amount: Math.floor(Math.random() * 1000) + 50, // ₹50 – ₹1050
+              amount: Math.floor(Math.random() * 1000) + 50, // {currencySymbol}50 – {currencySymbol}1050
               date: dateStr,
               note: `Sample entry in ${category.name}`,
               createdAt: new Date().toISOString(),

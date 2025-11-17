@@ -5,6 +5,7 @@ import { Text } from '~/components/nativewindui/Text';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { useSettingsStore } from '~/store/settingsStore';
 import { useState } from 'react';
+import { CurrencySettings } from '~/components/settings/CurrencySettings';
 
 const OPTIONS = [3, 5, 10, 15, 30, 90];
 
@@ -50,6 +51,8 @@ export default function SettingsScreen() {
             Entries in trash older than {trashRetentionDays} days will be purged automatically.
           </Text>
         </View>
+
+        <CurrencySettings />
       </View>
     </>
   );

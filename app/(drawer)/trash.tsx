@@ -8,9 +8,11 @@ import { useColorScheme } from '~/lib/useColorScheme';
 import { CategoryIcon } from '~/components/CategoryIcon';
 
 import { Text, Dialog, Portal, Button, RadioButton } from 'react-native-paper';
+import { useSettingsStore } from '~/store/settingsStore';
 
 export default function TrashPage() {
   const { colors } = useColorScheme();
+  const { currencySymbol } = useSettingsStore();
 
   const { entries, restoreEntry, removeEntry, purgeTrash } = useEntryStore();
   const {
@@ -128,7 +130,9 @@ export default function TrashPage() {
             </View>
 
             <Text className={`text-lg font-bold ${isIncome ? 'text-green-500' : 'text-red-500'}`}>
-              {isIncome ? '+' : '-'}₹{entry.amount}
+              {isIncome ? '+' : '-'}
+              {currencySymbol}
+              {entry.amount}
             </Text>
 
             <View className="ml-3 flex-col gap-2">

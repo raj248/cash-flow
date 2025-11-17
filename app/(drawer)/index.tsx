@@ -21,9 +21,11 @@ import { useColorScheme } from '~/lib/useColorScheme';
 import DateTimePicker from '@react-native-community/datetimepicker'; // 👈 install this
 import { cn } from '~/lib/cn';
 import { router } from 'expo-router';
+import { useSettingsStore } from '~/store/settingsStore';
 
 export default function Home() {
   const { getEntriesByDate, removeEntry } = useEntryStore();
+  const { currencySymbol } = useSettingsStore();
   const { categories } = useCategoryStore();
   const [atEnd, setAtEnd] = useState(false);
 
@@ -141,11 +143,18 @@ export default function Home() {
             className={`mt-1 text-3xl font-bold ${
               netBalance >= 0 ? 'text-green-500' : 'text-red-500'
             }`}>
-            ₹{netBalance}
+            {currencySymbol}
+            {netBalance}
           </Text>
           <View className="mt-2 flex-row justify-between">
-            <Text className="text-muted-foreground">Income: ₹{incomeTotal}</Text>
-            <Text className="text-muted-foreground">Expense: ₹{expenseTotal}</Text>
+            <Text className="text-muted-foreground">
+              Income: {currencySymbol}
+              {incomeTotal}
+            </Text>
+            <Text className="text-muted-foreground">
+              Expense: {currencySymbol}
+              {expenseTotal}
+            </Text>
           </View>
         </View>
 
@@ -163,7 +172,8 @@ export default function Home() {
                   <View className="flex-row items-center">{renderCategoryIcon(cat)}</View>
 
                   <Text className="text-base font-bold text-green-800 dark:text-green-200">
-                    ₹{cat.total}
+                    {currencySymbol}
+                    {cat.total}
                   </Text>
                 </View>
 
@@ -191,7 +201,8 @@ export default function Home() {
                 <View className="mb-2 flex-row items-center justify-between">
                   <View className="flex-row items-center">{renderCategoryIcon(cat)}</View>
                   <Text className="text-base font-bold text-red-800 dark:text-red-200">
-                    ₹{cat.total}
+                    {currencySymbol}
+                    {cat.total}
                   </Text>
                 </View>
 
@@ -267,7 +278,9 @@ export default function Home() {
                 </View>
                 <Text
                   className={`text-lg font-bold ${isIncome ? 'text-green-500' : 'text-red-500'}`}>
-                  {isIncome ? '+' : '-'}₹{entry.amount}
+                  {isIncome ? '+' : '-'}
+                  {currencySymbol}
+                  {entry.amount}
                 </Text>
               </Pressable>
             );

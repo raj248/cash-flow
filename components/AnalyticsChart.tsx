@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 import { CurveType, LineChart, lineDataItem } from 'react-native-gifted-charts';
 import { useEntryStore } from '~/store/entryStore';
 import { useCategoryStore } from '~/store/categoryStore';
+import { useSettingsStore } from '~/store/settingsStore';
 
 type Props = {
   initialFrom: Date;
@@ -12,6 +13,7 @@ type Props = {
 export function AnalyticsChart({ initialFrom, initialTo }: Props) {
   const { entries } = useEntryStore();
   const { categories } = useCategoryStore();
+  const { currencySymbol } = useSettingsStore();
 
   const chartData = useMemo(() => {
     const filtered = entries.filter(
@@ -121,7 +123,10 @@ export function AnalyticsChart({ initialFrom, initialTo }: Props) {
                 shadowRadius: 4,
                 elevation: 2,
               }}>
-              <Text style={{ fontSize: 12, fontWeight: '600', color: '#111' }}>₹{item.value}</Text>
+              <Text style={{ fontSize: 12, fontWeight: '600', color: '#111' }}>
+                {currencySymbol}
+                {item.value}
+              </Text>
             </View>
           )}
           maxValue={
@@ -136,16 +141,25 @@ export function AnalyticsChart({ initialFrom, initialTo }: Props) {
       {/* Totals */}
       <View className="mt-2 rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
         <Text className="text-sm text-gray-600 dark:text-gray-300">
-          Total Income: <Text className="font-semibold text-green-600">₹{totalIncome}</Text>
+          Total Income:{' '}
+          <Text className="font-semibold text-green-600">
+            {currencySymbol}
+            {totalIncome}
+          </Text>
         </Text>
         <Text className="text-sm text-gray-600 dark:text-gray-300">
-          Total Expense: <Text className="font-semibold text-red-600">₹{totalExpense}</Text>
+          Total Expense:{' '}
+          <Text className="font-semibold text-red-600">
+            {currencySymbol}
+            {totalExpense}
+          </Text>
         </Text>
         <Text
           className={`mt-1 text-base font-bold ${
             totalIncome - totalExpense >= 0 ? 'text-green-600' : 'text-red-600'
           }`}>
-          Net Balance: ₹{totalIncome - totalExpense}
+          Net Balance: {currencySymbol}
+          {totalIncome - totalExpense}
         </Text>
       </View>
     </View>

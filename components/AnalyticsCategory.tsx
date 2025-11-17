@@ -3,6 +3,7 @@ import { View, Text, Image } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useEntryStore } from '~/store/entryStore';
 import { Category, useCategoryStore } from '~/store/categoryStore';
+import { useSettingsStore } from '~/store/settingsStore';
 
 type Props = {
   initialFrom: Date;
@@ -12,6 +13,7 @@ type Props = {
 export function AnalyticsCategory({ initialFrom, initialTo }: Props) {
   const { entries } = useEntryStore();
   const { categories } = useCategoryStore();
+  const { currencySymbol } = useSettingsStore();
 
   const categoryData = useMemo(() => {
     const filteredEntries = entries.filter((e) => {
@@ -84,8 +86,18 @@ export function AnalyticsCategory({ initialFrom, initialTo }: Props) {
               {/* Category Info */}
               <View className="flex-1">
                 <Text className="font-semibold text-foreground">{category.name}</Text>
-                {income > 0 && <Text className="text-sm text-green-500">Income: ₹{income}</Text>}
-                {expense > 0 && <Text className="text-sm text-red-500">Expense: ₹{expense}</Text>}
+                {income > 0 && (
+                  <Text className="text-sm text-green-500">
+                    Income: {currencySymbol}
+                    {income}
+                  </Text>
+                )}
+                {expense > 0 && (
+                  <Text className="text-sm text-red-500">
+                    Expense: {currencySymbol}
+                    {expense}
+                  </Text>
+                )}
               </View>
 
               {/* Net */}
@@ -93,7 +105,9 @@ export function AnalyticsCategory({ initialFrom, initialTo }: Props) {
                 className={`ml-2 text-base font-bold ${
                   net >= 0 ? 'text-green-600' : 'text-red-600'
                 }`}>
-                {net >= 0 ? '+' : ''}₹{net}
+                {net >= 0 ? '+' : ''}
+                {currencySymbol}
+                {net}
               </Text>
             </View>
           );

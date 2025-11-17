@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, Text, View } from 'react-native';
 import { PieChart, LineChart } from 'react-native-gifted-charts';
 import { Button } from '../components/Button';
+import { useSettingsStore } from '~/store/settingsStore';
 
 const categories = ['Food', 'Rent', 'Travel', 'Shopping', 'Bills'];
 
@@ -21,6 +22,7 @@ const EXPENSE_DATA = () =>
 
 export default function ExpenseBreakdown() {
   const [data, setData] = useState(EXPENSE_DATA());
+  const { currencySymbol } = useSettingsStore();
 
   const total = data.reduce((acc, curr) => acc + curr.value, 0);
 
@@ -65,7 +67,10 @@ export default function ExpenseBreakdown() {
             persistTooltip={false}
             centerLabelComponent={() => (
               <View className="items-center">
-                <Text className="text-lg font-bold text-black dark:text-white">₹{total}</Text>
+                <Text className="text-lg font-bold text-black dark:text-white">
+                  {currencySymbol}
+                  {total}
+                </Text>
                 <Text className="text-xs text-gray-500">Total</Text>
               </View>
             )}
@@ -80,7 +85,8 @@ export default function ExpenseBreakdown() {
               <View key={index} className="flex-row items-center space-x-2">
                 <View className="h-4 w-4 rounded" style={{ backgroundColor: item.color }} />
                 <Text className="text-sm text-black dark:text-white">
-                  {item.text} - ₹{item.value} ({percent}%)
+                  {item.text} - {currencySymbol}
+                  {item.value} ({percent}%)
                 </Text>
               </View>
             );
