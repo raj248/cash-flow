@@ -1,103 +1,39 @@
-import { Stack } from 'expo-router';
 import { View } from 'react-native';
-import { Button, Card, Text } from 'react-native-paper';
-import * as FileSystem from 'expo-file-system';
-import * as Sharing from 'expo-sharing';
-import * as DocumentPicker from 'expo-document-picker';
-import { exportData, importData } from '~/utils/exportImport';
+import Animated, { useSharedValue, useAnimatedScrollHandler } from 'react-native-reanimated';
+import { HomeHeader } from '~/components/home/HomeHeader';
+import { Text } from '~/components/nativewindui/Text';
 
-async function saveToDownloads(json: string) {
-  // SAF → request access to a user folder
-  const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+export default function Home() {
+  const scrollY = useSharedValue(0);
 
-  if (!permissions.granted) {
-    alert('Permission not granted');
-    return;
-  }
+  const onScroll = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
 
-  const fileUri = `${permissions.directoryUri}/backup.json`;
-
-  await FileSystem.StorageAccessFramework.createFileAsync(
-    permissions.directoryUri,
-    'backup',
-    'application/json'
-  )
-    .then(async (uri) => {
-      await FileSystem.writeAsStringAsync(uri, json, { encoding: FileSystem.EncodingType.UTF8 });
-      alert('Backup saved successfully!');
-    })
-    .catch((err) => console.error('Error saving file', err));
-}
-
-async function handleExport() {
-  const data = exportData();
-  const json = JSON.stringify(data, null, 2);
-  const path = FileSystem.documentDirectory + 'backup.json';
-
-  await FileSystem.writeAsStringAsync(path, json, { encoding: 'utf8' });
-  await Sharing.shareAsync(path);
-}
-
-async function handleExportToDownloads() {
-  const data = exportData();
-  const json = JSON.stringify(data, null, 2);
-  const path = FileSystem.documentDirectory + 'backup.json';
-
-  await FileSystem.writeAsStringAsync(path, json, { encoding: 'utf8' });
-  // await Sharing.shareAsync(path);
-  await saveToDownloads(json);
-}
-
-async function handleImport() {
-  const res = await DocumentPicker.getDocumentAsync({ type: 'application/json' });
-  if (res.canceled) return;
-
-  const json = await FileSystem.readAsStringAsync(res.assets[0].uri);
-  const data = JSON.parse(json);
-  importData(data);
-}
-
-export default function BackupScreen() {
   return (
-    <>
-      {/* <Stack.Screen options={{ title: 'Backup & Restore' }} /> */}
-      <View style={{ flex: 1, justifyContent: 'center', padding: 16 }}>
-        <Card style={{ marginBottom: 20 }}>
-          <Card.Title title="Export Data" />
-          <Card.Content>
-            <Text>Save all your entries and categories as a backup file.</Text>
-          </Card.Content>
-          <Card.Actions>
-            <Button mode="contained" onPress={handleExport}>
-              Export
-            </Button>
-          </Card.Actions>
-        </Card>
+    <View className="flex-1">
+      {/* Sticky Header + Collapsing */}
+      <HomeHeader scrollY={scrollY} />
 
-        <Card style={{ marginBottom: 20 }}>
-          <Card.Title title="Export to SD Card" />
-          <Card.Content>
-            <Text>Save all your entries and categories as a backup file.</Text>
-          </Card.Content>
-          <Card.Actions>
-            <Button mode="contained" onPress={handleExportToDownloads}>
-              Export (SD Card)
-            </Button>
-          </Card.Actions>
-        </Card>
+      <Animated.ScrollView
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        stickyHeaderIndices={[0]} // <--- THIS makes it sticky
+        className="flex-1">
+        {/* Spacer so sticky header works correctly */}
+        <View />
 
-        <Card>
-          <Card.Title title="Import Data" />
-          <Card.Content>
-            <Text>Restore your data from a backup JSON file.</Text>
-          </Card.Content>
-          <Card.Actions>
-            <Button mode="contained" onPress={handleImport}>
-              Import
-            </Button>
-          </Card.Actions>
-        </Card>
-      </View>
-    </>
+        {/* Main content */}
+        <View className="gap-4 p-4">
+          {Array.from({ length: 20 }).map((_, i) => (
+            <View key={i} className="rounded-xl bg-card p-5">
+              <Text>{`Entry #${i + 1}`}</Text>
+            </View>
+          ))}
+        </View>
+      </Animated.ScrollView>
+    </View>
   );
 }
