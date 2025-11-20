@@ -203,7 +203,7 @@ export default function three() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#4f46e5" />
+      {/* <StatusBar barStyle="light-content" backgroundColor="#4f46e5" /> */}
 
       {/* Collapsing Header Container */}
       <Animated.View style={[styles.headerContainer, animatedHeaderStyle]}>

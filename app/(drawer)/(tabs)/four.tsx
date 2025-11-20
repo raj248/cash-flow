@@ -9,8 +9,7 @@ import {
   Image,
   NativeSyntheticEvent,
   NativeScrollEvent,
-  StyleSheet,
-  Dimensions, // Required for absoluteFillObject
+  StyleSheet, // Required for absoluteFillObject
 } from 'react-native';
 // Reanimated imports for the collapsing header effect
 import Animated, {
@@ -32,17 +31,10 @@ import { useCategoryStore, Category } from '~/store/categoryStore';
 import { useSettingsStore } from '~/store/settingsStore';
 import { useColorScheme } from '~/lib/useColorScheme';
 
-const screenH = Dimensions.get('window').height;
-
 // --- CONFIGURATION ---
-
-const MAX_HEADER_HEIGHT = screenH * 0.18; // Responsive
-const MIN_HEADER_HEIGHT = screenH * 0.08; // Responsive08
+const MAX_HEADER_HEIGHT = 220; // Expanded height
+const MIN_HEADER_HEIGHT = 100; // Collapsed/Sticky height
 const HEADER_DIFF = MAX_HEADER_HEIGHT - MIN_HEADER_HEIGHT;
-
-// const MAX_HEADER_HEIGHT = 220; // Expanded height
-// const MIN_HEADER_HEIGHT = 100; // Collapsed/Sticky height
-// const HEADER_DIFF = MAX_HEADER_HEIGHT - MIN_HEADER_HEIGHT;
 
 // Define a type for the data item passed to the FlatList (TransactionItem)
 type TransactionItemProps = {
@@ -259,7 +251,7 @@ export default function Home() {
     <SafeAreaView className="flex-1 bg-background">
       {/* <StatusBar
         barStyle={isDarkColorScheme ? 'light-content' : 'dark-content'}
-        backgroundColor={colors.card}
+        backgroundColor={'#44d45cff'}
       /> */}
 
       {/* Collapsing Header Container */}
@@ -277,7 +269,7 @@ export default function Home() {
         />
 
         <View
-          className="flex-1 justify-end rounded-b-3xl border-b-2 border-primary px-4 pb-4"
+          className="flex-1 justify-end px-4 pb-4"
           // Manual paddingTop required since StatusBar is dynamic
           style={{ paddingTop: (StatusBar.currentHeight || 0) + 10 }}>
           {/* Collapsed/Sticky Title (Net Balance) */}

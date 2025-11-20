@@ -155,6 +155,7 @@ export const useEntryStore = create<EntryState>()(
             });
           }
         }
+        dummyEntries.push(...get().entries);
 
         set({ entries: dummyEntries });
       },
