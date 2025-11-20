@@ -386,6 +386,12 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 10,
+    borderColor: '#1B9F67',
+    // borderColor: '#f7df08ff',
+    // borderWidth: 1,
+    borderBottomWidth: 1,
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   headerBackground: {
     ...StyleSheet.absoluteFillObject,

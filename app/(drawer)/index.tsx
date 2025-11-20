@@ -47,12 +47,13 @@ const HEADER_DIFF = MAX_HEADER_HEIGHT - MIN_HEADER_HEIGHT;
 // Define a type for the data item passed to the FlatList (TransactionItem)
 type TransactionItemProps = {
   item: Entry & { category?: Category };
+  onDelete?: (id: string) => void;
 };
 
 // --- COMPONENTS ---
 
 // 1. Transaction List Item Component
-const TransactionItem = ({ item }: TransactionItemProps) => {
+const TransactionItem = ({ item, onDelete }: TransactionItemProps) => {
   const { currencySymbol } = useSettingsStore();
   const { showActionSheetWithOptions } = useActionSheet();
   const { colors, isDarkColorScheme } = useColorScheme();
@@ -69,10 +70,10 @@ const TransactionItem = ({ item }: TransactionItemProps) => {
     ? 'text-green-500 dark:text-green-400'
     : 'text-red-500 dark:text-red-400';
 
-  const confirmDeleteEntry = (id: string) => {
-    // Direct call to remove entry (soft delete)
-    removeEntry(id, true);
-  };
+  // const confirmDeleteEntry = (id: string) => {
+  //   // Direct call to remove entry (soft delete)
+  //   removeEntry(id, true);
+  // };
 
   const handlePress = () => {
     showActionSheetWithOptions(
@@ -94,7 +95,7 @@ const TransactionItem = ({ item }: TransactionItemProps) => {
             router.push(`/edit-entry?id=${item.id}`);
             break;
           case 1:
-            confirmDeleteEntry(item.id);
+            onDelete?.(item.id);
             break;
           case 2:
           // Cancel
@@ -247,7 +248,7 @@ export default function Home() {
   const renderItem = useCallback(
     ({ item }: { item: Entry }) => {
       const category = categories.find((cat) => cat.id === item.categoryId);
-      return <TransactionItem item={{ ...item, category }} />;
+      return <TransactionItem item={{ ...item, category }} onDelete={confirmDeleteEntry} />;
     },
     [categories, currencySymbol]
   );
@@ -277,7 +278,7 @@ export default function Home() {
         />
 
         <View
-          className="flex-1 justify-end rounded-b-3xl border-b-2 border-primary px-4 pb-4"
+          className="flex-1 justify-end px-4 pb-4"
           // Manual paddingTop required since StatusBar is dynamic
           style={{ paddingTop: (StatusBar.currentHeight || 0) + 10 }}>
           {/* Collapsed/Sticky Title (Net Balance) */}
@@ -394,6 +395,11 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 10,
+    borderColor: '#1B9F67',
+
+    borderBottomWidth: 2,
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   headerBackground: {
     ...StyleSheet.absoluteFillObject,
