@@ -9,7 +9,8 @@ import {
   Image,
   NativeSyntheticEvent,
   NativeScrollEvent,
-  StyleSheet, // Required for absoluteFillObject
+  StyleSheet,
+  Dimensions, // Required for absoluteFillObject
 } from 'react-native';
 // Reanimated imports for the collapsing header effect
 import Animated, {
@@ -30,21 +31,30 @@ import { useEntryStore, Entry } from '~/store/entryStore';
 import { useCategoryStore, Category } from '~/store/categoryStore';
 import { useSettingsStore } from '~/store/settingsStore';
 import { useColorScheme } from '~/lib/useColorScheme';
+import NewEntryDialog from '~/components/home/newEntryDialog';
+
+const screenH = Dimensions.get('window').height;
 
 // --- CONFIGURATION ---
-const MAX_HEADER_HEIGHT = 220; // Expanded height
-const MIN_HEADER_HEIGHT = 100; // Collapsed/Sticky height
+
+const MAX_HEADER_HEIGHT = screenH * 0.18; // Responsive
+const MIN_HEADER_HEIGHT = screenH * 0.08; // Responsive08
 const HEADER_DIFF = MAX_HEADER_HEIGHT - MIN_HEADER_HEIGHT;
+
+// const MAX_HEADER_HEIGHT = 220; // Expanded height
+// const MIN_HEADER_HEIGHT = 100; // Collapsed/Sticky height
+// const HEADER_DIFF = MAX_HEADER_HEIGHT - MIN_HEADER_HEIGHT;
 
 // Define a type for the data item passed to the FlatList (TransactionItem)
 type TransactionItemProps = {
   item: Entry & { category?: Category };
+  onDelete?: (id: string) => void;
 };
 
 // --- COMPONENTS ---
 
 // 1. Transaction List Item Component
-const TransactionItem = ({ item }: TransactionItemProps) => {
+const TransactionItem = ({ item, onDelete }: TransactionItemProps) => {
   const { currencySymbol } = useSettingsStore();
   const { showActionSheetWithOptions } = useActionSheet();
   const { colors, isDarkColorScheme } = useColorScheme();
@@ -61,10 +71,10 @@ const TransactionItem = ({ item }: TransactionItemProps) => {
     ? 'text-green-500 dark:text-green-400'
     : 'text-red-500 dark:text-red-400';
 
-  const confirmDeleteEntry = (id: string) => {
-    // Direct call to remove entry (soft delete)
-    removeEntry(id, true);
-  };
+  // const confirmDeleteEntry = (id: string) => {
+  //   // Direct call to remove entry (soft delete)
+  //   removeEntry(id, true);
+  // };
 
   const handlePress = () => {
     showActionSheetWithOptions(
@@ -86,7 +96,7 @@ const TransactionItem = ({ item }: TransactionItemProps) => {
             router.push(`/edit-entry?id=${item.id}`);
             break;
           case 1:
-            confirmDeleteEntry(item.id);
+            onDelete?.(item.id);
             break;
           case 2:
           // Cancel
@@ -239,19 +249,25 @@ export default function Home() {
   const renderItem = useCallback(
     ({ item }: { item: Entry }) => {
       const category = categories.find((cat) => cat.id === item.categoryId);
-      return <TransactionItem item={{ ...item, category }} />;
+      return <TransactionItem item={{ ...item, category }} onDelete={confirmDeleteEntry} />;
     },
     [categories, currencySymbol]
   );
 
   const keyExtractor = useCallback((item: Entry) => item.id, []);
 
+  const [visible, setVisible] = useState(false);
+  const addEntry = useEntryStore((s) => s.addEntry);
+
+  const handleAddEntry = (entry: Omit<Entry, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>) => {
+    addEntry(entry);
+  };
   // --- Render ---
   return (
     <SafeAreaView className="flex-1 bg-background">
       {/* <StatusBar
         barStyle={isDarkColorScheme ? 'light-content' : 'dark-content'}
-        backgroundColor={'#44d45cff'}
+        backgroundColor={colors.card}
       /> */}
 
       {/* Collapsing Header Container */}
@@ -293,6 +309,12 @@ export default function Home() {
                 <Text className="text-sm font-semibold text-primary-foreground">
                   {selectedDate.toLocaleDateString()}
                 </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                className="rounded-lg bg-primary px-3 py-1"
+                onPress={() => setVisible(true)}>
+                <Text className="text-sm font-semibold text-primary-foreground">New</Text>
               </TouchableOpacity>
             </View>
 
@@ -374,6 +396,13 @@ export default function Home() {
         </Dialog>
         <FloatingButton visible={!atEnd || dayEntries.length === 0} />
       </Portal>
+
+      <NewEntryDialog
+        visible={visible}
+        onDismiss={() => setVisible(false)}
+        categories={categories}
+        addEntry={addEntry}
+      />
     </SafeAreaView>
   );
 }
@@ -387,9 +416,8 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 10,
     borderColor: '#1B9F67',
-    // borderColor: '#f7df08ff',
-    // borderWidth: 1,
-    borderBottomWidth: 1,
+
+    borderBottomWidth: 2,
     borderRadius: 10,
     overflow: 'hidden',
   },
